@@ -68,7 +68,7 @@ const getSingleService = async (slug: string) => {
   try {
     const result = await Service.findOne({
       "seo_content.url_slug": slug,
-    });
+    }).select("-__v -createdAt -updatedAt -_id");
     return result;
   } catch (err) {
     console.error("Error fetching service:", err);
@@ -82,7 +82,8 @@ const updateSingleService = async (slug: string, payload: any) => {
       // { service_slug: slug },
       payload,
       { new: true }
-    );
+    ).select("-__v -createdAt -updatedAt -_id");
+
     if (!result) {
       throw new AppError(StatusCodes.NOT_FOUND, "Service is Not Found!");
     }
