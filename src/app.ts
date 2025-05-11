@@ -21,7 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 // Static folder for image access
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("", UploadRoutes);
-app.use("/api/v1", router);
+app.use("/api", router);
 
 seedAdmin();
 

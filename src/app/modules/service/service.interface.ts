@@ -1,11 +1,11 @@
 // Step 1: interface (src/modules/service/service.interface.ts)
 
-export interface IImageButton {
+export interface IButton {
   text: string;
   link: string;
 }
 
-export interface IImageOption {
+export interface IOption {
   title: string;
   description: string;
   image: string;
@@ -19,8 +19,8 @@ export interface IFaqOption {
 
 export interface IPriceOption {
   title: string;
-  originalPrice: string;
-  discountedPrice: string;
+  original_price: string;
+  discounted_price: string;
   description: string;
   features: string[];
 }
@@ -30,30 +30,31 @@ export interface IServiceContent {
     title: string;
     description: string;
     image: string;
-    button: IImageButton;
+    button: IButton;
   };
   featureBanner: {
     title: string;
     description: string;
     image: string;
-    button: IImageButton;
+    button: IButton;
   };
   features: {
     title: string;
     description: string;
-    options: IImageOption[];
+    options: IOption[];
   };
   faqs: {
     title: string;
     description: string;
     image: string;
-    button: IImageButton;
+    button: IButton;
     options: IFaqOption[];
   };
   benefits: {
     title: string;
     description: string;
-    options: IImageOption[];
+    image?: string;
+    options: IOption[];
   };
   price: {
     title: string;
@@ -65,11 +66,14 @@ export interface IServiceContent {
 export interface IService {
   theme_id: number;
   content: IServiceContent;
+  service_slug: string;
   seo_content: {
     seo_title: string;
     meta_description: string;
+    canonical_url?: string;
     url_slug: string;
     keywords: string;
+    og_image?: string;
   };
   createdBy?: string;
 }

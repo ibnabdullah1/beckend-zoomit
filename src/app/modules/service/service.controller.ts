@@ -1,62 +1,58 @@
 import { StatusCodes } from "http-status-codes";
-import config from "../../config";
+import pick from "../../../shared/pick";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
+import { serviceFilterableFields } from "./service.constant";
+import { ServiceServices } from "./service.service";
 
 const createService = catchAsync(async (req, res) => {
   const service = req.body;
 
-  // Convert Buffer-style objects to plain JavaScript objects
-  const filesMap: Record<string, Express.Multer.File[]> = {};
-  (req.files as Express.Multer.File[]).forEach((file) => {
-    if (!filesMap[file.fieldname]) {
-      filesMap[file.fieldname] = [];
-    }
-    filesMap[file.fieldname].push(file);
-  });
-
-  // Example: attach banner image
-  if (filesMap["banner[image]"]) {
-    service.banner = {
-      ...service.banner,
-      image: `${config.server_url}/uploads/${filesMap["banner[image]"][0].filename}`,
-    };
-  }
-
-  // Example: featureBanner image
-  if (filesMap["featureBanner[image]"]) {
-    service.featureBanner = {
-      ...service.featureBanner,
-      image: `${config.server_url}/uploads/${filesMap["featureBanner[image]"][0].filename}`,
-    };
-  }
-
-  // Example: assign feature option images
-  const features = service?.features?.options || [];
-  for (let i = 0; i < features.length; i++) {
-    const key = `features[options][${i}][image]`;
-    if (filesMap[key]) {
-      features[
-        i
-      ].image = `${config.server_url}/uploads/${filesMap[key][0].filename}`;
-    }
-  }
-
-  // Repeat this logic for:
-  // - `faqs[image]`
-  // - `benefits[options][i][image]`
-  // - any other image fields you use
-
-  console.log(service);
-
+  const result = await ServiceServices.createService(service);
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
     message: "Service page created successfully",
-    data: service,
+    data: result,
+  });
+});
+const getAllService = catchAsync(async (req, res) => {
+  const filters = pick(req.query, serviceFilterableFields);
+  const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
+  const result = await ServiceServices.getAllService(filters, options);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "Service pages retrieved successfully",
+    data: result,
+  });
+});
+
+const getSingleService = catchAsync(async (req, res) => {
+  const result = await ServiceServices.getSingleService(req.params.slug);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "Service page created successfully",
+    data: result,
+  });
+});
+
+const updateSingleService = catchAsync(async (req, res) => {
+  const slug = req.params.slug;
+  const result = await ServiceServices.updateSingleService(slug, req.body);
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "Service page updated successfully",
+    data: result,
   });
 });
 
 export const ServiceControllers = {
   createService,
+  getAllService,
+  getSingleService,
+  updateSingleService,
 };
