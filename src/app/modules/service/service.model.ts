@@ -4,10 +4,6 @@ import { IService } from "./service.interface";
 const serviceSchema = new Schema<IService>(
   {
     theme_id: { type: Number, required: true },
-    service_slug: {
-      type: String,
-      unique: true,
-    },
     content: {
       banner: {
         title: String,
@@ -84,7 +80,7 @@ const serviceSchema = new Schema<IService>(
       meta_description: String,
       canonical_url: String,
       og_image: String,
-      url_slug: {
+      service_slug: {
         type: String,
         unique: true,
       },

@@ -66,12 +66,11 @@ export interface IServiceContent {
 export interface IService {
   theme_id: number;
   content: IServiceContent;
-  service_slug: string;
   seo_content: {
     seo_title: string;
     meta_description: string;
     canonical_url?: string;
-    url_slug: string;
+    service_slug: string;
     keywords: string;
     og_image?: string;
   };

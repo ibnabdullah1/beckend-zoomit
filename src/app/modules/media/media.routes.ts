@@ -7,5 +7,5 @@ const router = Router();
 router.get("/", MediaController.listImages);
 router.delete("/:name", MediaController.deleteImage);
 router.post("/", upload.single("file"), MediaController.uploadImage);
-
+router.patch("/rename", MediaController.renameImage);
 export const MediaRoutes = router;

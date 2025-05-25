@@ -33,7 +33,7 @@ const getSingleService = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: "Service page created successfully",
+    message: "Service page retrieved successfully",
     data: result,
   });
 });

@@ -8,6 +8,15 @@ import { Service } from "./service.model";
 
 const createService = async (payload: IService) => {
   try {
+    const existing = await Service.findOne({
+      "seo_content.service_slug": payload.seo_content.service_slug,
+    });
+    if (existing) {
+      throw new AppError(
+        StatusCodes.CONFLICT,
+        "A service with this slug already exists."
+      );
+    }
     const result = await Service.create(payload);
     return result;
   } catch (err) {
@@ -67,8 +76,12 @@ export const getAllService = async (
 const getSingleService = async (slug: string) => {
   try {
     const result = await Service.findOne({
-      "seo_content.url_slug": slug,
+      "seo_content.service_slug": slug,
     }).select("-__v -createdAt -updatedAt -_id");
+
+    if (!result) {
+      throw new AppError(StatusCodes.NOT_FOUND, "Service is Not Found!");
+    }
     return result;
   } catch (err) {
     console.error("Error fetching service:", err);
@@ -77,16 +90,36 @@ const getSingleService = async (slug: string) => {
 };
 const updateSingleService = async (slug: string, payload: any) => {
   try {
+    // Find existing service by slug
+    const existingService = await Service.findOne({
+      "seo_content.service_slug": slug,
+    });
+
+    if (!existingService) {
+      throw new AppError(StatusCodes.NOT_FOUND, "Service is Not Found!");
+    }
+
+    // Check for duplicate seo_content.url_slug
+    if (payload.seo_content?.service_slug) {
+      const duplicateUrlSlug = await Service.findOne({
+        "seo_content.service_slug": payload.seo_content.service_slug,
+        _id: { $ne: existingService._id },
+      });
+
+      if (duplicateUrlSlug) {
+        throw new AppError(
+          StatusCodes.CONFLICT,
+          "Another service with this URL slug already exists."
+        );
+      }
+    }
+
+    // Proceed to update
     const result = await Service.findOneAndUpdate(
-      { "seo_content.url_slug": slug },
-      // { service_slug: slug },
+      { "seo_content.service_slug": slug },
       payload,
       { new: true }
     ).select("-__v -createdAt -updatedAt -_id");
-
-    if (!result) {
-      throw new AppError(StatusCodes.NOT_FOUND, "Service is Not Found!");
-    }
 
     return result;
   } catch (err) {
@@ -94,7 +127,6 @@ const updateSingleService = async (slug: string, payload: any) => {
     throw err;
   }
 };
-
 export const ServiceServices = {
   createService,
   getAllService,
