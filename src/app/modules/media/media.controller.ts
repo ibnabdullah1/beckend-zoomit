@@ -55,7 +55,8 @@ const listImages = (req: Request, res: Response): void => {
           extension: path.extname(file),
           date: formatDate(stats.mtime),
           createdAt: stats.mtime.toISOString(),
-          url: `${process.env.SERVER_URL}/uploads/${file}`,
+          // url: `${process.env.SERVER_URL}/uploads/${file}`
+          url: `/${file}`,
           isPublic: true,
         };
       })
@@ -97,42 +98,6 @@ const deleteImage = (req: Request, res: Response): void => {
   });
 };
 
-// Upload a new image
-// const uploadImage = async (req: Request, res: Response): Promise<void> => {
-//   try {
-//     if (!req.file) {
-//       sendResponse(res, {
-//         statusCode: StatusCodes.BAD_REQUEST,
-//         success: false,
-//         message: "No file uploaded",
-//       });
-//       return;
-//     }
-
-//     const filename = req.file.filename;
-//     const filePath = `/uploads/${filename}`;
-
-//     const customName = req.body.customName;
-
-//     sendResponse(res, {
-//       statusCode: StatusCodes.OK,
-//       success: true,
-//       message: "Image uploaded successfully",
-//       data: {
-//         filename,
-//         path: filePath,
-//         customName: customName || filename,
-//       },
-//     });
-//   } catch (error) {
-//     console.error("Image upload error:", error);
-//     sendResponse(res, {
-//       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-//       success: false,
-//       message: "Something went wrong during image upload",
-//     });
-//   }
-// };
 const uploadImage = async (req: Request, res: Response): Promise<void> => {
   try {
     if (!req.file) {
