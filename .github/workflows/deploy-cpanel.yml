@@ -31,9 +31,10 @@ jobs:
       - name: 🔑 SSH and restart Node app
         uses: appleboy/ssh-action@master
         with:
-          host: www.mmadinah.com
+          host: 209.182.237.105
           username: ${{ secrets.CPANEL_USER }}
           password: ${{ secrets.CPANEL_PASSWORD }}
+          port: 2222 # <- Add your SSH port here
           script: |
             cd zoom-it-beckend.mmadinah.com
             npm install --omit=dev
