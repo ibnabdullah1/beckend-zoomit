@@ -1,47 +1,40 @@
-name: Deploy to cPanel
+name: 🚀 Deploy website on push
 
 on:
   push:
-    branches: [main] # deploy on pushes to main branch
+    branches:
+      - main
 
 jobs:
-  deploy:
+  web-deploy:
+    name: 🎉 Deploy to cPanel
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v4
 
-      - name: Install dependencies and build project
+      - name: 🔨 Install Dependencies and Build Project
         run: |
           npm install
-          npm run build
+          npm run build  # Ensure this is correct
 
-      - name: Test SSH connection to server
-        uses: appleboy/ssh-action@master
+      - name: 📂 Sync files via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          host: ${{ secrets.CPANEL_HOST }}
+          server: www.mmadinah.com
           username: ${{ secrets.CPANEL_USER }}
           password: ${{ secrets.CPANEL_PASSWORD }}
-          script: |
-            echo "SSH connection successful!"
+          local-dir: ./dist/
+          server-dir: /zoom-it-beckend.mmadinah.com/
 
-      - name: Copy files to cPanel server via SCP
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.CPANEL_HOST }}
-          username: ${{ secrets.CPANEL_USER }}
-          password: ${{ secrets.CPANEL_PASSWORD }}
-          source: "dist/*"
-          target: "/home/mmadinah/zoom-it-beckend.mmadinah.com"
-
-      - name: SSH into server and restart app using PM2
+      - name: 🔑 SSH and restart Node app
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.CPANEL_HOST }}
+          host: www.mmadinah.com
           username: ${{ secrets.CPANEL_USER }}
           password: ${{ secrets.CPANEL_PASSWORD }}
           script: |
             cd zoom-it-beckend.mmadinah.com
             npm install --omit=dev
-            npx pm2 restart all || npx pm2 start dist/server.js --name "zoom-it"
+            npx pm2 restart all || npx pm2 start server.js --name "zoom-it"
