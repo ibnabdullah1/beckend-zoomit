@@ -1,0 +1,38 @@
+name: Deploy to cPanel
+
+on:
+  push:
+    branches: [main] # Change this if you deploy from a different branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install dependencies and build project
+        run: |
+          npm install
+          npm run build
+
+      - name: Copy files to cPanel server via SCP
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.CPANEL_HOST }}
+          username: ${{ secrets.CPANEL_USER }}
+          password: ${{ secrets.CPANEL_PASSWORD }}
+          source: "dist/*"
+          target: "/home/mmadinah/zoom-it-beckend.mmadinah.com"
+
+      - name: SSH into server and restart app using PM2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.CPANEL_HOST }}
+          username: ${{ secrets.CPANEL_USER }}
+          password: ${{ secrets.CPANEL_PASSWORD }}
+          script: |
+            cd zoom-it-beckend.mmadinah.com
+            npm install --omit=dev
+            npx pm2 restart all || npx pm2 start dist/server.js --name "zoom-it"
