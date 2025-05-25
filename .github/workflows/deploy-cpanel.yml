@@ -2,7 +2,7 @@ name: Deploy to cPanel
 
 on:
   push:
-    branches: [main] # Change this if you deploy from a different branch
+    branches: [main] # Change if needed
 
 jobs:
   deploy:
@@ -23,6 +23,7 @@ jobs:
           host: ${{ secrets.CPANEL_HOST }}
           username: ${{ secrets.CPANEL_USER }}
           password: ${{ secrets.CPANEL_PASSWORD }}
+          port: 2222 # Change to 22 if default
           source: "dist/*"
           target: "/home/mmadinah/zoom-it-beckend.mmadinah.com"
 
@@ -32,6 +33,7 @@ jobs:
           host: ${{ secrets.CPANEL_HOST }}
           username: ${{ secrets.CPANEL_USER }}
           password: ${{ secrets.CPANEL_PASSWORD }}
+          port: 2222 # Same port here
           script: |
             cd zoom-it-beckend.mmadinah.com
             npm install --omit=dev
