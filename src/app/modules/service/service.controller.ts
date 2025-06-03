@@ -16,6 +16,17 @@ const createService = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const saveDraftService = catchAsync(async (req, res) => {
+  const service = req.body;
+
+  const result = await ServiceServices.saveDraftService(service);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "Service page saved as draft successfully",
+    data: result,
+  });
+});
 const getAllService = catchAsync(async (req, res) => {
   const filters = pick(req.query, serviceFilterableFields);
   const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
@@ -37,15 +48,44 @@ const getSingleService = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const singleDraftService = catchAsync(async (req, res) => {
+  const result = await ServiceServices.singleDraftService(req.params.id);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "Service page retrieved successfully",
+    data: result,
+  });
+});
 
+const updateDraftSingleService = catchAsync(async (req, res) => {
+  const id = req.params.id;
+  const result = await ServiceServices.updateDraftSingleService(id, req.body);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "Draft Service updated successfully",
+    data: result,
+  });
+});
 const updateSingleService = catchAsync(async (req, res) => {
   const slug = req.params.slug;
   const result = await ServiceServices.updateSingleService(slug, req.body);
-
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
     message: "Service page updated successfully",
+    data: result,
+  });
+});
+const deleteService = catchAsync(async (req, res) => {
+  const id = req.params.id;
+
+  const result = await ServiceServices.deleteService(id);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "Service page deleted successfully",
     data: result,
   });
 });
@@ -55,4 +95,8 @@ export const ServiceControllers = {
   getAllService,
   getSingleService,
   updateSingleService,
+  saveDraftService,
+  singleDraftService,
+  updateDraftSingleService,
+  deleteService,
 };

@@ -86,6 +86,10 @@ const serviceSchema = new Schema<IService>(
       },
       keywords: String,
     },
+    is_published: { type: Boolean, default: false },
+    is_draft: { type: Boolean, default: false },
+    is_deleted: { type: Boolean, default: false },
+    createdBy: String,
   },
   { timestamps: true }
 );

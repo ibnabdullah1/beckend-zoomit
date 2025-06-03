@@ -74,5 +74,8 @@ export interface IService {
     keywords: string;
     og_image?: string;
   };
+  is_published: boolean;
+  is_draft: boolean;
+  is_deleted: boolean;
   createdBy?: string;
 }
