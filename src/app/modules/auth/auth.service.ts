@@ -38,7 +38,7 @@ const loginUser = async (payload: IAuth) => {
       role: user.role,
     };
 
-    const accessToken = createToken(
+    const token = createToken(
       jwtPayload,
       config.jwt_access_secret as string,
       config.jwt_access_expires_in as string
@@ -59,8 +59,15 @@ const loginUser = async (payload: IAuth) => {
     await session.commitTransaction();
 
     return {
-      accessToken,
+      token,
       refreshToken,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        isActive: user.isActive,
+        role: user.role,
+      },
     };
   } catch (error) {
     await session.abortTransaction();

@@ -111,7 +111,7 @@ const singleDraftService = async (id: string) => {
   try {
     const result = await Service.findOne({
       _id: id,
-      is_draft: true,
+      is_drafted: true,
     }).select("-__v -createdAt -updatedAt");
 
     if (!result) {
@@ -214,7 +214,7 @@ const deleteService = async (id: string) => {
     // Proceed to update
     await Service.findOneAndUpdate(
       { _id: id },
-      { is_deleted: true, is_draft: false, is_published: false },
+      { is_deleted: true, is_drafted: false, is_published: false },
       { new: true }
     ).select("-__v -createdAt -updatedAt -_id");
 

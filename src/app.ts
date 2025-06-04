@@ -15,7 +15,13 @@ const app: Application = express();
 // Middleware setup
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://zoom-it.vercel.app"],
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:3003",
+      "https://admin.thezoomit.com",
+      "https://zoom-it.vercel.app",
+      "https://admin-zoomit.vercel.app",
+    ],
     credentials: true,
   })
 );

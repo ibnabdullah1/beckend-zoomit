@@ -74,6 +74,9 @@ const serviceSchema = new Schema<IService>(
           },
         ],
       },
+      more_info: {
+        content: String,
+      },
     },
     seo_content: {
       seo_title: String,
@@ -87,11 +90,11 @@ const serviceSchema = new Schema<IService>(
       keywords: String,
     },
     is_published: { type: Boolean, default: false },
-    is_draft: { type: Boolean, default: false },
+    is_drafted: { type: Boolean, default: false },
     is_deleted: { type: Boolean, default: false },
     createdBy: String,
   },
-  { timestamps: true }
+  { timestamps: true, versionKey: false }
 );
 
 export const Service = model<IService>("Service", serviceSchema);

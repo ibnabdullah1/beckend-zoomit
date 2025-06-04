@@ -1,11 +1,11 @@
 import { Router } from "express";
 import { upload } from "../../middleware/upload";
-import { MediaController } from "./media.controller";
+import { MediaControllers } from "./media.controller";
 
 const router = Router();
 
-router.get("/", MediaController.listImages);
-router.delete("/:name", MediaController.deleteImage);
-router.post("/", upload.single("file"), MediaController.uploadImage);
-router.patch("/rename", MediaController.renameImage);
+router.get("/", MediaControllers.listImages);
+router.delete("/:name", MediaControllers.deleteImage);
+router.post("/", upload.single("file"), MediaControllers.uploadImage);
+router.patch("/rename", MediaControllers.renameImage);
 export const MediaRoutes = router;

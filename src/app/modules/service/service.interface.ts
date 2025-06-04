@@ -61,6 +61,9 @@ export interface IServiceContent {
     description: string;
     options: IPriceOption[];
   };
+  more_info?: {
+    more_info: string;
+  };
 }
 
 export interface IService {
@@ -75,7 +78,7 @@ export interface IService {
     og_image?: string;
   };
   is_published: boolean;
-  is_draft: boolean;
+  is_drafted: boolean;
   is_deleted: boolean;
   createdBy?: string;
 }

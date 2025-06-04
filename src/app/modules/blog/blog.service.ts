@@ -1,6 +1,9 @@
 import { StatusCodes } from "http-status-codes";
 import AppError from "../../errors/appError";
+import { paginationHelper } from "../../helpers/paginationHelper";
+import { IPaginationOptions } from "../../interface/pagination";
 import { generateSlug } from "../../utils/slug";
+import { blogSearchableFields } from "./blog.constant";
 import { IBlog } from "./blog.interface";
 import { Blog } from "./blog.model";
 
@@ -17,8 +20,52 @@ const createBlog = async (payload: IBlog): Promise<IBlog> => {
   return Blog.create(payload);
 };
 
-const getAllBlogs = async (): Promise<IBlog[]> => {
-  return Blog.find({ is_deleted: false }).sort({ createdAt: -1 });
+const getAllBlogs = async (params: any, options: IPaginationOptions) => {
+  const { page, limit, skip, sortBy, sortOrder } =
+    paginationHelper.calculatePagination(options);
+  const { keyword, ...filterData } = params;
+
+  // Search condition
+  const searchCondition =
+    keyword && blogSearchableFields.length > 0
+      ? {
+          $or: blogSearchableFields.map((field) => ({
+            [field]: { $regex: keyword, $options: "i" },
+          })),
+        }
+      : {};
+
+  // Filter condition
+  const filterCondition =
+    Object.keys(filterData).length > 0
+      ? {
+          $and: Object.entries(filterData).map(([key, value]) => ({
+            [key]: value,
+          })),
+        }
+      : {};
+
+  const whereConditions = {
+    ...searchCondition,
+    ...filterCondition,
+    is_deleted: { $ne: true },
+  };
+
+  const data = await Blog.find(whereConditions)
+    .sort({ [sortBy]: sortOrder === "asc" ? 1 : -1 })
+    .skip(skip)
+    .limit(limit);
+
+  const total = await Blog.countDocuments(whereConditions);
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data,
+  };
 };
 
 const getSingleBlog = async (id: string): Promise<IBlog> => {
@@ -28,16 +75,23 @@ const getSingleBlog = async (id: string): Promise<IBlog> => {
 };
 
 const updateBlog = async (id: string, data: Partial<IBlog>): Promise<IBlog> => {
+  if (data?.title) {
+    data.slug = generateSlug(data.title);
+  }
+
   const blog = await Blog.findOneAndUpdate(
     { _id: id, is_deleted: false },
     data,
     { new: true }
   );
-  if (!blog)
+
+  if (!blog) {
     throw new AppError(
       StatusCodes.NOT_FOUND,
       "Blog not found or already deleted."
     );
+  }
+
   return blog;
 };
 

@@ -1,6 +1,6 @@
 export const serviceFilterableFields = [
   "keyword",
-  "is_draft",
+  "is_drafted",
   "is_published",
   "is_deleted",
 ];
