@@ -53,7 +53,6 @@ export interface IServiceContent {
   benefits: {
     title: string;
     description: string;
-    image?: string;
     options: IOption[];
   };
   price: {
