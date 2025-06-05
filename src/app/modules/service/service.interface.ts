@@ -61,7 +61,7 @@ export interface IServiceContent {
     options: IPriceOption[];
   };
   more_info?: {
-    more_info: string;
+    content: string;
   };
 }
 
