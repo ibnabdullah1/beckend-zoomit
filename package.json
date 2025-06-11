@@ -1,10 +1,10 @@
 {
-  "name": "nextmart-server",
+  "name": "zoomit-beckend",
   "version": "1.0.0",
-  "description": "A e-commerce web application server.",
+  "description": "",
   "main": "server.js",
-  "repository": "https://github.com/Programming-Hero-Next-Level-Development/NextMart-Server.git",
-  "author": "Next Level Web Development Team",
+  "repository": "https://github.com/ibnabdullah1/zoomit-beckend.git",
+  "author": "Zoom IT Development Team",
   "license": "MIT",
   "scripts": {
     "start": "node dist/server.js",
