@@ -7,8 +7,12 @@ import { blogSearchableFields } from "./blog.constant";
 import { IBlog } from "./blog.interface";
 import { Blog } from "./blog.model";
 
+import { v4 as uuidv4 } from "uuid";
+
 const createBlog = async (payload: IBlog): Promise<IBlog> => {
   const slug = generateSlug(payload.title);
+  const uuid = uuidv4();
+
   const existing = await Blog.findOne({ slug, is_deleted: false });
   if (existing) {
     throw new AppError(
@@ -16,7 +20,10 @@ const createBlog = async (payload: IBlog): Promise<IBlog> => {
       "A blog with this title already exists."
     );
   }
+
   payload.slug = slug;
+  payload.uuid = uuid;
+
   return Blog.create(payload);
 };
 
@@ -54,7 +61,12 @@ const getAllBlogs = async (params: any, options: IPaginationOptions) => {
   const data = await Blog.find(whereConditions)
     .sort({ [sortBy]: sortOrder === "asc" ? 1 : -1 })
     .skip(skip)
-    .limit(limit);
+    .limit(limit)
+    .populate({
+      path: "author",
+      select: "name email role isActive -_id",
+    })
+    .select("-_id");
 
   const total = await Blog.countDocuments(whereConditions);
 
@@ -68,19 +80,22 @@ const getAllBlogs = async (params: any, options: IPaginationOptions) => {
   };
 };
 
-const getSingleBlog = async (id: string): Promise<IBlog> => {
-  const blog = await Blog.findOne({ _id: id, is_deleted: false });
+const getSingleBlog = async (slug: string): Promise<IBlog> => {
+  const blog = await Blog.findOne({ slug: slug, is_deleted: false });
   if (!blog) throw new AppError(StatusCodes.NOT_FOUND, "Blog not found.");
   return blog;
 };
 
-const updateBlog = async (id: string, data: Partial<IBlog>): Promise<IBlog> => {
+const updateBlog = async (
+  slug: string,
+  data: Partial<IBlog>
+): Promise<IBlog> => {
   if (data?.title) {
     data.slug = generateSlug(data.title);
   }
 
   const blog = await Blog.findOneAndUpdate(
-    { _id: id, is_deleted: false },
+    { slug: slug, is_deleted: false },
     data,
     { new: true }
   );
@@ -95,45 +110,10 @@ const updateBlog = async (id: string, data: Partial<IBlog>): Promise<IBlog> => {
   return blog;
 };
 
-const softDeleteBlog = async (id: string): Promise<IBlog> => {
-  const blog = await Blog.findOneAndUpdate(
-    { _id: id, is_deleted: false },
-    { is_deleted: true },
-    { new: true }
-  );
-  if (!blog)
-    throw new AppError(
-      StatusCodes.NOT_FOUND,
-      "Blog not found or already deleted."
-    );
-  return blog;
-};
-
-const getBlogBySlug = async (slug: string): Promise<IBlog> => {
-  const blog = await Blog.findOne({ slug, is_deleted: false });
-  if (!blog) throw new AppError(StatusCodes.NOT_FOUND, "Blog not found.");
-  return blog;
-};
-
-const updateBlogBySlug = async (
-  slug: string,
-  data: Partial<IBlog>
-): Promise<IBlog> => {
-  const blog = await Blog.findOneAndUpdate({ slug, is_deleted: false }, data, {
-    new: true,
-  });
-  if (!blog)
-    throw new AppError(
-      StatusCodes.NOT_FOUND,
-      "Blog not found or already deleted."
-    );
-  return blog;
-};
-
-const softDeleteBlogBySlug = async (slug: string): Promise<IBlog> => {
+const deleteBlog = async (slug: string): Promise<IBlog> => {
   const blog = await Blog.findOneAndUpdate(
     { slug, is_deleted: false },
-    { is_deleted: true },
+    { is_deleted: true, is_drafted: false, is_published: false },
     { new: true }
   );
   if (!blog)
@@ -147,10 +127,7 @@ const softDeleteBlogBySlug = async (slug: string): Promise<IBlog> => {
 export const BlogServices = {
   createBlog,
   getAllBlogs,
-  getSingleBlog,
   updateBlog,
-  softDeleteBlog,
-  getBlogBySlug,
-  updateBlogBySlug,
-  softDeleteBlogBySlug,
+  getSingleBlog,
+  deleteBlog,
 };

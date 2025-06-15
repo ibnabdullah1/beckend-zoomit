@@ -7,12 +7,14 @@ import { blogFilterableFields } from "./blog.constant";
 import { BlogServices } from "./blog.service";
 
 const createBlog = catchAsync(async (req: Request, res: Response) => {
-  const result = await BlogServices.createBlog(req.body);
+  await BlogServices.createBlog({
+    ...req.body,
+    author: req.user.userId,
+  });
   sendResponse(res, {
     statusCode: StatusCodes.CREATED,
     success: true,
     message: "Blog created successfully",
-    data: result,
   });
 });
 
@@ -29,8 +31,8 @@ const getAllBlogs = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const getBlogBySlug = catchAsync(async (req: Request, res: Response) => {
-  const result = await BlogServices.getBlogBySlug(req.params.slug);
+const getSingleBlog = catchAsync(async (req: Request, res: Response) => {
+  const result = await BlogServices.getSingleBlog(req.params.slug);
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
@@ -40,7 +42,7 @@ const getBlogBySlug = catchAsync(async (req: Request, res: Response) => {
 });
 
 const updateBlog = catchAsync(async (req: Request, res: Response) => {
-  const result = await BlogServices.updateBlog(req.params.id, req.body);
+  const result = await BlogServices.updateBlog(req.params.slug, req.body);
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
@@ -50,7 +52,7 @@ const updateBlog = catchAsync(async (req: Request, res: Response) => {
 });
 
 const deleteBlog = catchAsync(async (req: Request, res: Response) => {
-  const result = await BlogServices.softDeleteBlog(req.params.id);
+  const result = await BlogServices.deleteBlog(req.params.slug);
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
@@ -62,7 +64,7 @@ const deleteBlog = catchAsync(async (req: Request, res: Response) => {
 export const BlogControllers = {
   createBlog,
   getAllBlogs,
-  getBlogBySlug,
+  getSingleBlog,
   updateBlog,
   deleteBlog,
 };

@@ -1,19 +1,44 @@
 import { z } from "zod";
 
-export const blogValidation = {
-  create: z.object({
-    body: z.object({
-      title: z.string().min(1, "Title is required"),
-      content: z.string().min(1, "Content is required"),
-      category: z.string().min(1, "Category is required"),
-    }),
-  }),
+const seoSchema = z.object({
+  metaTitle: z.string().optional(),
+  metaDescription: z.string().optional(),
+  metaKeywords: z.array(z.string()).optional(),
+});
 
-  update: z.object({
-    body: z.object({
-      title: z.string().optional(),
-      content: z.string().optional(),
-      category: z.string().optional(),
-    }),
+const create = z.object({
+  body: z.object({
+    title: z.string().min(1, "Title is required"),
+    sort_description: z.string().optional(),
+    content: z.string().optional(),
+    excerpt: z.string().optional(),
+    category: z.string().optional(),
+    tags: z.array(z.string()).optional(),
+    is_drafted: z.boolean().optional(),
+    is_published: z.boolean().optional(),
+    is_deleted: z.boolean().optional(),
+    publishDate: z.union([z.string().datetime(), z.date()]).optional(),
+    seo: seoSchema.optional(),
   }),
+});
+
+const update = z.object({
+  body: z.object({
+    title: z.string().optional(),
+    sort_description: z.string().optional(),
+    content: z.string().optional(),
+    excerpt: z.string().optional(),
+    category: z.string().optional(),
+    tags: z.array(z.string()).optional(),
+    is_drafted: z.boolean().optional(),
+    is_published: z.boolean().optional(),
+    is_deleted: z.boolean().optional(),
+    publishDate: z.union([z.string().datetime(), z.date()]).optional(),
+    seo: seoSchema.optional(),
+  }),
+});
+
+export const BlogValidation = {
+  create,
+  update,
 };
