@@ -2,6 +2,7 @@ import { Router } from "express";
 import { AuthRoutes } from "../modules/auth/auth.routes";
 import { BlogRoutes } from "../modules/blog/blog.routes";
 import { MediaRoutes } from "../modules/media/media.routes";
+import { ProjectRoutes } from "../modules/project/project.routes";
 import { ReviewRoutes } from "../modules/review/review.routes";
 import { ServiceRoutes } from "../modules/service/service.routes";
 import { UserRoutes } from "../modules/user/user.routes";
@@ -27,6 +28,10 @@ const moduleRoutes = [
   {
     path: "/media",
     route: MediaRoutes,
+  },
+  {
+    path: "/project",
+    route: ProjectRoutes,
   },
   {
     path: "/blogs",
