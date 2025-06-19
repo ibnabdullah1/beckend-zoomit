@@ -13,7 +13,7 @@ const baseProjectSchema = {
     .nonempty("At least one tech stack item is required"),
   client_name: z.string().optional(),
   features: z.array(z.string()).nonempty("At least one feature is required"),
-  image: z.string("Image is required"),
+  image: z.string().nonempty("Image is required"),
   url: z.string().url("URL must be a valid URL"),
   year: z.number().int().min(2000).max(new Date().getFullYear()),
   status: projectStatusEnum,
