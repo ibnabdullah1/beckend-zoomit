@@ -5,28 +5,28 @@ import sendResponse from "../../utils/sendResponse";
 import { serviceFilterableFields } from "./service.constant";
 import { ServiceServices } from "./service.service";
 
-const createService = catchAsync(async (req, res) => {
+const updateSlug = catchAsync(async (req, res) => {
   const service = req.body;
-
-  const result = await ServiceServices.createService(service);
+  const slug = req.params.slug;
+  const result = await ServiceServices.updateSlug(service, slug);
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: "Service page created successfully",
+    message: "Service slug updated successfully",
     data: result,
   });
 });
-const saveDraftService = catchAsync(async (req, res) => {
+const createSlug = catchAsync(async (req, res) => {
   const service = req.body;
-
-  const result = await ServiceServices.saveDraftService(service);
+  const result = await ServiceServices.createSlug(service);
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: "Service page saved as draft successfully",
+    message: "Service slug created successfully",
     data: result,
   });
 });
+
 const getAllService = catchAsync(async (req, res) => {
   const filters = pick(req.query, serviceFilterableFields);
   const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
@@ -48,26 +48,7 @@ const getSingleService = catchAsync(async (req, res) => {
     data: result,
   });
 });
-const singleDraftService = catchAsync(async (req, res) => {
-  const result = await ServiceServices.singleDraftService(req.params.id);
-  sendResponse(res, {
-    statusCode: StatusCodes.OK,
-    success: true,
-    message: "Service page retrieved successfully",
-    data: result,
-  });
-});
 
-const updateDraftSingleService = catchAsync(async (req, res) => {
-  const id = req.params.id;
-  const result = await ServiceServices.updateDraftSingleService(id, req.body);
-  sendResponse(res, {
-    statusCode: StatusCodes.OK,
-    success: true,
-    message: "Draft Service updated successfully",
-    data: result,
-  });
-});
 const updateSingleService = catchAsync(async (req, res) => {
   const slug = req.params.slug;
   const result = await ServiceServices.updateSingleService(slug, req.body);
@@ -91,12 +72,10 @@ const deleteService = catchAsync(async (req, res) => {
 });
 
 export const ServiceControllers = {
-  createService,
+  updateSlug,
+  createSlug,
   getAllService,
   getSingleService,
   updateSingleService,
-  saveDraftService,
-  singleDraftService,
-  updateDraftSingleService,
   deleteService,
 };

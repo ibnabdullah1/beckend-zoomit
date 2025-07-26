@@ -5,21 +5,15 @@ import { ServiceControllers } from "./service.controller";
 
 const router = Router();
 
-router.post("/create", auth(UserRole.ADMIN), ServiceControllers.createService);
 router.post(
-  "/draft",
+  "/create-slug",
   auth(UserRole.ADMIN),
-  ServiceControllers.saveDraftService
-);
-router.get(
-  "/draft/:id",
-  auth(UserRole.ADMIN),
-  ServiceControllers.singleDraftService
+  ServiceControllers.createSlug
 );
 router.put(
-  "/draft/:id",
+  "/update-slug/:slug",
   auth(UserRole.ADMIN),
-  ServiceControllers.updateDraftSingleService
+  ServiceControllers.updateSlug
 );
 router.get("/", auth(UserRole.ADMIN), ServiceControllers.getAllService);
 router.get("/:slug", ServiceControllers.getSingleService);

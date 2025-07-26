@@ -7,10 +7,10 @@ import { serviceSearchableFields } from "./service.constant";
 import { IService } from "./service.interface";
 import { Service } from "./service.model";
 
-const createService = async (payload: IService) => {
+const createSlug = async (payload: IService) => {
   try {
     const existing = await Service.findOne({
-      "seo_content.service_slug": payload.seo_content.service_slug,
+      slug: payload.slug,
     });
     if (existing) {
       throw new AppError(
@@ -21,30 +21,28 @@ const createService = async (payload: IService) => {
     const result = await Service.create(payload);
     return result;
   } catch (err) {
-    console.error("Error creating service:", err);
     throw err;
   }
 };
-const saveDraftService = async (payload: IService) => {
+const updateSlug = async (payload: any, slug: string) => {
   try {
-    if (payload?.seo_content) {
-      const existing = await Service.findOne({
-        "seo_content.service_slug": payload.seo_content.service_slug,
-      });
-      if (existing) {
-        throw new AppError(
-          StatusCodes.CONFLICT,
-          "A service with this slug already exists."
-        );
-      }
+    const existing = await Service.findOne({ slug });
+    if (!existing) {
+      throw new AppError(
+        StatusCodes.NOT_FOUND,
+        "A service with this slug does not exist."
+      );
     }
-    const result = await Service.create(payload);
+    const result = await Service.findOneAndUpdate({ slug }, payload, {
+      new: true,
+    });
     return result;
   } catch (err) {
     console.error("Error creating service:", err);
     throw err;
   }
 };
+
 const getAllService = async (params: any, options: IPaginationOptions) => {
   const { page, limit, skip, sortBy, sortOrder } =
     paginationHelper.calculatePagination(options);
@@ -95,7 +93,7 @@ const getAllService = async (params: any, options: IPaginationOptions) => {
 const getSingleService = async (slug: string) => {
   try {
     const result = await Service.findOne({
-      "seo_content.service_slug": slug,
+      slug,
     }).select("-__v -createdAt -updatedAt -_id");
 
     if (!result) {
@@ -107,74 +105,18 @@ const getSingleService = async (slug: string) => {
     throw err;
   }
 };
-const singleDraftService = async (id: string) => {
-  try {
-    const result = await Service.findOne({
-      _id: id,
-      is_drafted: true,
-    }).select("-__v -createdAt -updatedAt");
 
-    if (!result) {
-      throw new AppError(StatusCodes.NOT_FOUND, "Service is Not Found!");
-    }
-    return result;
-  } catch (err) {
-    console.error("Error fetching service:", err);
-    throw err;
-  }
-};
-const updateDraftSingleService = async (id: string, payload: any) => {
-  try {
-    // Find existing service by slug
-    const existingService = await Service.findOne({
-      _id: id,
-    });
-
-    if (!existingService) {
-      throw new AppError(StatusCodes.NOT_FOUND, "Service is Not Found!");
-    }
-
-    // Check for duplicate seo_content.url_slug
-    if (payload.seo_content?.service_slug) {
-      const duplicateUrlSlug = await Service.findOne({
-        "seo_content.service_slug": payload.seo_content.service_slug,
-        _id: { $ne: existingService._id },
-      });
-
-      if (duplicateUrlSlug) {
-        throw new AppError(
-          StatusCodes.CONFLICT,
-          "Another service with this URL slug already exists."
-        );
-      }
-    }
-
-    // Proceed to update
-    const result = await Service.findOneAndUpdate({ _id: id }, payload, {
-      new: true,
-    }).select("-__v -createdAt -updatedAt -_id");
-
-    return result;
-  } catch (err) {
-    console.error("Error updating service:", err);
-    throw err;
-  }
-};
 const updateSingleService = async (slug: string, payload: any) => {
   try {
-    // Find existing service by slug
-    const existingService = await Service.findOne({
-      "seo_content.service_slug": slug,
-    });
+    const existingService = await Service.findOne({ slug });
 
     if (!existingService) {
       throw new AppError(StatusCodes.NOT_FOUND, "Service is Not Found!");
     }
 
-    // Check for duplicate seo_content.url_slug
-    if (payload.seo_content?.service_slug) {
+    if (payload.slug) {
       const duplicateUrlSlug = await Service.findOne({
-        "seo_content.service_slug": payload.seo_content.service_slug,
+        slug: payload.slug,
         _id: { $ne: existingService._id },
       });
 
@@ -186,10 +128,28 @@ const updateSingleService = async (slug: string, payload: any) => {
       }
     }
 
-    // Proceed to update
+    // Flatten nested objects to dot notation
+    const flattenObject = (obj: any, prefix = "") => {
+      return Object.keys(obj).reduce((acc, key) => {
+        const newKey = prefix ? `${prefix}.${key}` : key;
+        if (
+          typeof obj[key] === "object" &&
+          obj[key] !== null &&
+          !Array.isArray(obj[key])
+        ) {
+          Object.assign(acc, flattenObject(obj[key], newKey));
+        } else {
+          acc[newKey] = obj[key];
+        }
+        return acc;
+      }, {} as Record<string, any>);
+    };
+
+    const dotNotatedPayload = flattenObject(payload);
+
     const result = await Service.findOneAndUpdate(
-      { "seo_content.service_slug": slug },
-      payload,
+      { slug },
+      { $set: dotNotatedPayload },
       { new: true }
     ).select("-__v -createdAt -updatedAt -_id");
 
@@ -199,6 +159,7 @@ const updateSingleService = async (slug: string, payload: any) => {
     throw err;
   }
 };
+
 const deleteService = async (id: string) => {
   try {
     // Find existing service by slug
@@ -225,12 +186,10 @@ const deleteService = async (id: string) => {
   }
 };
 export const ServiceServices = {
-  createService,
+  updateSlug,
+  createSlug,
   getAllService,
   getSingleService,
   updateSingleService,
-  saveDraftService,
-  singleDraftService,
-  updateDraftSingleService,
   deleteService,
 };
