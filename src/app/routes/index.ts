@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { ActionLogRoutes } from "../modules/actionLog/actionLog.route";
 import { AuthRoutes } from "../modules/auth/auth.routes";
 import { BlogRoutes } from "../modules/blog/blog.routes";
 import { MediaRoutes } from "../modules/media/media.routes";
@@ -36,6 +37,10 @@ const moduleRoutes = [
   {
     path: "/blogs",
     route: BlogRoutes,
+  },
+  {
+    path: "/action-logs",
+    route: ActionLogRoutes,
   },
 ];
 

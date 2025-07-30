@@ -23,6 +23,8 @@ const serviceSchema = new Schema<IService>(
     },
 
     trusted_top_brands: {
+      serial_no: { type: Number, default: 1 },
+      is_hidden: { type: Boolean, default: false },
       title: String,
       brands: [
         {
@@ -33,6 +35,8 @@ const serviceSchema = new Schema<IService>(
     },
 
     feature_banner: {
+      serial_no: { type: Number, default: 2 },
+      is_hidden: { type: Boolean, default: false },
       title: String,
       description: String,
       image: String,
@@ -41,6 +45,8 @@ const serviceSchema = new Schema<IService>(
     },
 
     features: {
+      serial_no: { type: Number, default: 3 },
+      is_hidden: { type: Boolean, default: false },
       title: String,
       description: String,
       button_text: String,
@@ -54,6 +60,8 @@ const serviceSchema = new Schema<IService>(
     },
 
     stats: {
+      serial_no: { type: Number, default: 4 },
+      is_hidden: { type: Boolean, default: false },
       background_image: String,
       stats: [
         {
@@ -65,6 +73,8 @@ const serviceSchema = new Schema<IService>(
     },
 
     key_benefits: {
+      serial_no: { type: Number, default: 5 },
+      is_hidden: { type: Boolean, default: false },
       title: String,
       description: String,
       options: [
@@ -76,7 +86,19 @@ const serviceSchema = new Schema<IService>(
       ],
     },
 
+    portfolio_overview: {
+      serial_no: { type: Number, default: 16 },
+      is_hidden: { type: Boolean, default: false },
+      image: String,
+      title: String,
+      description: String,
+      button_text: String,
+      button_link: String,
+    },
+
     start_project_cta: {
+      serial_no: { type: Number, default: 6 },
+      is_hidden: { type: Boolean, default: false },
       title: String,
       description: String,
       background_image: String,
@@ -86,6 +108,8 @@ const serviceSchema = new Schema<IService>(
     },
 
     best_features: {
+      serial_no: { type: Number, default: 7 },
+      is_hidden: { type: Boolean, default: false },
       title: String,
       description: String,
       options: [
@@ -97,6 +121,8 @@ const serviceSchema = new Schema<IService>(
     },
 
     tech_stack: {
+      serial_no: { type: Number, default: 8 },
+      is_hidden: { type: Boolean, default: false },
       title: String,
       description: String,
       techs: [
@@ -108,6 +134,8 @@ const serviceSchema = new Schema<IService>(
     },
 
     pricing_plan: {
+      serial_no: { type: Number, default: 9 },
+      is_hidden: { type: Boolean, default: false },
       title: String,
       description: String,
       plans: [
@@ -123,6 +151,8 @@ const serviceSchema = new Schema<IService>(
     },
 
     conversion_focused_cta: {
+      serial_no: { type: Number, default: 10 },
+      is_hidden: { type: Boolean, default: false },
       title: String,
       description: String,
       background_image: String,
@@ -132,6 +162,8 @@ const serviceSchema = new Schema<IService>(
     },
 
     industries: {
+      serial_no: { type: Number, default: 11 },
+      is_hidden: { type: Boolean, default: false },
       title: String,
       description: String,
       industries: [
@@ -143,6 +175,8 @@ const serviceSchema = new Schema<IService>(
     },
 
     workflow: {
+      serial_no: { type: Number, default: 12 },
+      is_hidden: { type: Boolean, default: false },
       title: String,
       description: String,
       button_text: String,
@@ -156,10 +190,14 @@ const serviceSchema = new Schema<IService>(
     },
 
     more_info: {
+      serial_no: { type: Number, default: 13 },
+      is_hidden: { type: Boolean, default: false },
       content: String,
     },
 
     faqs: {
+      serial_no: { type: Number, default: 14 },
+      is_hidden: { type: Boolean, default: false },
       title: String,
       description: String,
       image: String,
@@ -172,6 +210,8 @@ const serviceSchema = new Schema<IService>(
     },
 
     start_project_Form: {
+      serial_no: { type: Number, default: 15 },
+      is_hidden: { type: Boolean, default: false },
       title: String,
       short_description: String,
       description: String,

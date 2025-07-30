@@ -12,12 +12,8 @@ router.post("/refresh-token", AuthController.refreshToken);
 
 router.post(
   "/change-password",
-  auth(UserRole.ADMIN, UserRole.USER),
+  auth(UserRole.SUPER_ADMIN, UserRole.USER),
   AuthController.changePassword
 );
-
-router.post("/forgot-password", AuthController.forgotPassword);
-router.post("/verify-otp", AuthController.verifyOTP);
-router.post("/reset-password", AuthController.resetPassword);
 
 export const AuthRoutes = router;

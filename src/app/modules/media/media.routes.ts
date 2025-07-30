@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { actionLogger } from "../../middleware/actionLogger";
 import auth from "../../middleware/auth";
 import { upload } from "../../middleware/upload";
 import { UserRole } from "../user/user.interface";
@@ -6,13 +7,24 @@ import { MediaControllers } from "./media.controller";
 
 const router = Router();
 
-router.get("/", auth(UserRole.ADMIN), MediaControllers.listImages);
-router.delete("/:name", auth(UserRole.ADMIN), MediaControllers.deleteImage);
+router.get("/", auth(UserRole.SUPER_ADMIN), MediaControllers.listImages);
+router.delete(
+  "/:name",
+  auth(UserRole.SUPER_ADMIN),
+  actionLogger,
+  MediaControllers.deleteImage
+);
 router.post(
   "/",
-  auth(UserRole.ADMIN),
+  auth(UserRole.SUPER_ADMIN),
   upload.single("file"),
+  actionLogger,
   MediaControllers.uploadImage
 );
-router.patch("/rename", auth(UserRole.ADMIN), MediaControllers.renameImage);
+router.patch(
+  "/rename",
+  actionLogger,
+  auth(UserRole.SUPER_ADMIN),
+  MediaControllers.renameImage
+);
 export const MediaRoutes = router;

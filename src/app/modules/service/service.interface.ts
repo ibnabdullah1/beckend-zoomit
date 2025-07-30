@@ -1,4 +1,6 @@
 export interface IBanner {
+  serial_no: number;
+  is_hidden: boolean;
   title: string;
   sub_title: string;
   description: string;
@@ -8,6 +10,8 @@ export interface IBanner {
 }
 
 export interface ITrustedTopBrands {
+  serial_no: number;
+  is_hidden: boolean;
   title: string;
   brands: {
     name: string;
@@ -16,6 +20,8 @@ export interface ITrustedTopBrands {
 }
 
 export interface IFeatureBanner {
+  serial_no: number;
+  is_hidden: boolean;
   title: string;
   description: string;
   image: string;
@@ -24,6 +30,8 @@ export interface IFeatureBanner {
 }
 
 export interface IFeatures {
+  serial_no: number;
+  is_hidden: boolean;
   title: string;
   description: string;
   button_text: string;
@@ -35,6 +43,8 @@ export interface IFeatures {
 }
 
 export interface IStats {
+  serial_no: number;
+  is_hidden: boolean;
   background_image: string;
   stats: {
     count: number;
@@ -44,6 +54,8 @@ export interface IStats {
 }
 
 export interface IKeyBenefits {
+  serial_no: number;
+  is_hidden: boolean;
   title: string;
   description: string;
   options: {
@@ -52,8 +64,18 @@ export interface IKeyBenefits {
     image: string;
   }[];
 }
-
+export interface IPortfolioOverview {
+  serial_no: number;
+  is_hidden: boolean;
+  image: string;
+  title: string;
+  description: string;
+  button_text: string;
+  button_link: string;
+}
 export interface IStartProjectCTA {
+  serial_no: number;
+  is_hidden: boolean;
   title: string;
   description: string;
   background_image: string;
@@ -63,6 +85,8 @@ export interface IStartProjectCTA {
 }
 
 export interface IBestFeatures {
+  serial_no: number;
+  is_hidden: boolean;
   title: string;
   description: string;
   options: {
@@ -72,6 +96,8 @@ export interface IBestFeatures {
 }
 
 export interface ITechStack {
+  serial_no: number;
+  is_hidden: boolean;
   title: string;
   description: string;
   techs: {
@@ -81,6 +107,8 @@ export interface ITechStack {
 }
 
 export interface IPricingPlan {
+  serial_no: number;
+  is_hidden: boolean;
   title: string;
   description: string;
   plans: {
@@ -94,6 +122,8 @@ export interface IPricingPlan {
 }
 
 export interface IConversionFocusedCTA {
+  serial_no: number;
+  is_hidden: boolean;
   title: string;
   description: string;
   background_image: string;
@@ -103,6 +133,8 @@ export interface IConversionFocusedCTA {
 }
 
 export interface IIndustries {
+  serial_no: number;
+  is_hidden: boolean;
   title: string;
   description: string;
   industries: {
@@ -112,6 +144,8 @@ export interface IIndustries {
 }
 
 export interface IWorkflow {
+  serial_no: number;
+  is_hidden: boolean;
   title: string;
   description: string;
   button_text: string;
@@ -123,6 +157,8 @@ export interface IWorkflow {
 }
 
 export interface IFaqs {
+  serial_no: number;
+  is_hidden: boolean;
   title: string;
   description: string;
   image: string;
@@ -133,6 +169,8 @@ export interface IFaqs {
 }
 
 export interface IStartProjectForm {
+  serial_no: number;
+  is_hidden: boolean;
   title: string;
   short_description: string;
   description: string;
@@ -140,6 +178,8 @@ export interface IStartProjectForm {
   button_link: string;
 }
 export interface IMoreInfo {
+  serial_no: number;
+  is_hidden: boolean;
   content: string;
 }
 
@@ -158,6 +198,7 @@ export interface IService {
   features: IFeatures;
   stats: IStats;
   key_benefits: IKeyBenefits;
+  portfolio_overview: IPortfolioOverview;
   start_project_cta: IStartProjectCTA;
   best_features: IBestFeatures;
   tech_stack: ITechStack;

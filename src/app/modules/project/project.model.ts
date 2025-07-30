@@ -3,15 +3,11 @@ import { IProject } from "./project.interface";
 
 const projectSchema = new Schema<IProject>(
   {
-    title: { type: String, required: true },
-    category: { type: String, required: true },
-    description: { type: String, required: true },
-    client_name: { type: String, required: false },
-    tech_stack: { type: [String], required: true },
-    features: { type: [String], required: true },
-    image: { type: String, required: true },
-    url: { type: String, required: true },
-    year: { type: Number, required: true },
+    name: { type: String, required: true },
+    thumbnail: { type: String, required: true },
+    sort_description: { type: String, required: true },
+    client_logo: { type: String, required: true },
+    link: { type: String, required: true },
     status: {
       type: String,
       enum: ["In Production", "Development", "Archived"],

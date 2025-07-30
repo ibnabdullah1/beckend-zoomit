@@ -1,12 +1,9 @@
 export interface IProject {
-  title: string;
+  name: string;
+  thumbnail: string;
   category: string;
-  description: string;
-  tech_stack: string[];
-  client_name?: string;
-  features: string[];
-  image: string;
-  url: string;
-  year: number;
+  sort_description: string;
+  client_logo: string;
+  link: string;
   status: "In Production" | "Development" | "Archived";
 }
