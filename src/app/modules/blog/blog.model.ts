@@ -10,6 +10,9 @@ const blogSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    thumbnail: {
+      type: String,
+    },
     uuid: {
       type: String,
       unique: true,

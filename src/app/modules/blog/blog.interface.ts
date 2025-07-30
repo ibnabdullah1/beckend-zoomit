@@ -4,6 +4,7 @@ export interface IBlog {
   _id?: string;
   uuid?: string;
   title: string;
+  thumbnail?: string;
   sort_description?: string;
   slug?: string;
   content?: string;
