@@ -15,7 +15,6 @@ jobs:
 
       - name: Install SSH Client
         run: sudo apt-get install -y sshpass
-
       - name: Deploy to aaPanel server
         env:
           HOST: 89.233.105.5
@@ -25,8 +24,17 @@ jobs:
         run: |
           sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no $USERNAME@$HOST << EOF
             cd $APP_DIR || exit 1
+
+            # Fix Git warning
+            git config --global --add safe.directory $APP_DIR
+
+            # Pull code
             git pull origin main
+
+            # Install dependencies
             npm install
+
+            # Restart with PM2
             pm2 delete zoomit_server || true
             pm2 start npm --name zoomit_server -- start
           EOF
