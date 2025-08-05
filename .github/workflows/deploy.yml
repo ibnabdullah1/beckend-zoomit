@@ -17,10 +17,15 @@ jobs:
         run: sudo apt-get install -y sshpass
 
       - name: Deploy to aaPanel server
+        env:
+          HOST: 89.233.105.5
+          USERNAME: c80qiesq
+          PASSWORD: e4a3d208
+          APP_DIR: /www/wwwroot/ZOOMIT/zoomit-beckend
         run: |
-          sshpass -p "e4a3d208" ssh -o StrictHostKeyChecking=no c80qiesq@89.233.105.5"
+          sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no $USERNAME@$HOST << 'EOF'
             cd /www/wwwroot/ZOOMIT/zoomit-beckend || exit 1
             git pull origin main
             npm install
             pm2 restart zoomit_server || pm2 start npm --name zoomit_server -- start
-          "
+          EOF
