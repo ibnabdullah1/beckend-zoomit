@@ -46,7 +46,7 @@ app.get("/", (req: Request, res: Response, next: NextFunction) => {
 
   res.status(StatusCodes.OK).json({
     success: true,
-    message: "Welcome to the ZOOM IT",
+    message: "Welcome to the ZOOM IT 1:0",
     version: "1.0.1",
     clientDetails: {
       ipAddress: clientIp,

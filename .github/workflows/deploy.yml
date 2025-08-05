@@ -1,0 +1,26 @@
+name: Deploy Node.js Backend to aaPanel
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install SSH Client
+        run: sudo apt-get install -y sshpass
+
+      - name: Deploy to aaPanel server
+        run: |
+          sshpass -p "${{ secrets.PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
+            cd ${{ secrets.APP_DIR }} || exit 1
+            git pull origin main
+            npm install
+            pm2 restart zoomit_server || pm2 start npm --name zoomit_server -- start
+          "
