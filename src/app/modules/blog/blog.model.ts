@@ -13,11 +13,6 @@ const blogSchema = new mongoose.Schema(
     thumbnail: {
       type: String,
     },
-    uuid: {
-      type: String,
-      unique: true,
-      required: true,
-    },
     sort_description: {
       type: String,
     },
@@ -41,19 +36,15 @@ const blogSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
-    is_drafted: {
-      type: Boolean,
-      default: false,
-    },
-    is_published: {
-      type: Boolean,
-      default: false,
-    },
-    is_deleted: {
+    status: {
       type: Boolean,
       default: false,
     },
 
+    is_deleted: {
+      type: Boolean,
+      default: false,
+    },
     author: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

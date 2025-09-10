@@ -7,12 +7,8 @@ import { blogSearchableFields } from "./blog.constant";
 import { IBlog } from "./blog.interface";
 import { Blog } from "./blog.model";
 
-import { v4 as uuidv4 } from "uuid";
-
 const createBlog = async (payload: IBlog): Promise<IBlog> => {
   const slug = generateSlug(payload.title);
-  const uuid = uuidv4();
-
   const existing = await Blog.findOne({ slug, is_deleted: false });
   if (existing) {
     throw new AppError(
@@ -22,7 +18,6 @@ const createBlog = async (payload: IBlog): Promise<IBlog> => {
   }
 
   payload.slug = slug;
-  payload.uuid = uuid;
 
   return Blog.create(payload);
 };
@@ -81,7 +76,10 @@ const getAllBlogs = async (params: any, options: IPaginationOptions) => {
 };
 
 const getSingleBlog = async (slug: string): Promise<IBlog> => {
-  const blog = await Blog.findOne({ slug: slug, is_deleted: false });
+  const blog = await Blog.findOne({ slug: slug, is_deleted: false }).populate({
+    path: "author",
+    select: "name email -_id",
+  });
   if (!blog) throw new AppError(StatusCodes.NOT_FOUND, "Blog not found.");
   return blog;
 };

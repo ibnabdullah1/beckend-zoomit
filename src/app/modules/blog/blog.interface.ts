@@ -2,7 +2,6 @@ import { Types } from "mongoose";
 
 export interface IBlog {
   _id?: string;
-  uuid?: string;
   title: string;
   thumbnail?: string;
   sort_description?: string;
@@ -11,8 +10,7 @@ export interface IBlog {
   excerpt?: string;
   category?: string;
   tags?: string[];
-  is_drafted?: boolean;
-  is_published?: boolean;
+  status: boolean;
   is_deleted?: boolean;
   author: Types.ObjectId | string;
   seo?: {

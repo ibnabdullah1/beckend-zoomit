@@ -14,10 +14,8 @@ const create = z.object({
     excerpt: z.string().optional(),
     category: z.string().optional(),
     tags: z.array(z.string()).optional(),
-    is_drafted: z.boolean().optional(),
-    is_published: z.boolean().optional(),
+    status: z.boolean().optional(),
     is_deleted: z.boolean().optional(),
-    publishDate: z.union([z.string().datetime(), z.date()]).optional(),
     seo: seoSchema.optional(),
   }),
 });
@@ -30,10 +28,8 @@ const update = z.object({
     excerpt: z.string().optional(),
     category: z.string().optional(),
     tags: z.array(z.string()).optional(),
-    is_drafted: z.boolean().optional(),
-    is_published: z.boolean().optional(),
+    status: z.boolean().optional(),
     is_deleted: z.boolean().optional(),
-    publishDate: z.union([z.string().datetime(), z.date()]).optional(),
     seo: seoSchema.optional(),
   }),
 });

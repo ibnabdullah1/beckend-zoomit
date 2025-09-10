@@ -1,5 +1,4 @@
 import { StatusCodes } from "http-status-codes";
-import { ObjectId } from "mongodb";
 import AppError from "../../errors/appError";
 import { paginationHelper } from "../../helpers/paginationHelper";
 import { IPaginationOptions } from "../../interface/pagination";
@@ -228,65 +227,11 @@ const updateSingleService = async (slug: string, payload: any) => {
   }
 };
 
-// const updateSingleService = async (slug: string, payload: any) => {
-//   try {
-//     const existingService = await Service.findOne({ slug });
-
-//     if (!existingService) {
-//       throw new AppError(StatusCodes.NOT_FOUND, "Service is Not Found!");
-//     }
-
-//     if (payload.slug) {
-//       const duplicateUrlSlug = await Service.findOne({
-//         slug: payload.slug,
-//         _id: { $ne: existingService._id },
-//       });
-
-//       if (duplicateUrlSlug) {
-//         throw new AppError(
-//           StatusCodes.CONFLICT,
-//           "Another service with this URL slug already exists."
-//         );
-//       }
-//     }
-
-//     // Flatten nested objects to dot notation
-//     const flattenObject = (obj: any, prefix = "") => {
-//       return Object.keys(obj).reduce((acc, key) => {
-//         const newKey = prefix ? `${prefix}.${key}` : key;
-//         if (
-//           typeof obj[key] === "object" &&
-//           obj[key] !== null &&
-//           !Array.isArray(obj[key])
-//         ) {
-//           Object.assign(acc, flattenObject(obj[key], newKey));
-//         } else {
-//           acc[newKey] = obj[key];
-//         }
-//         return acc;
-//       }, {} as Record<string, any>);
-//     };
-
-//     const dotNotatedPayload = flattenObject(payload);
-
-//     const result = await Service.findOneAndUpdate(
-//       { slug },
-//       { $set: dotNotatedPayload },
-//       { new: true }
-//     ).select("-__v -createdAt -updatedAt -_id");
-
-//     return result;
-//   } catch (err) {
-//     console.error("Error updating service:", err);
-//     throw err;
-//   }
-// };
-
-const deleteService = async (id: string) => {
+const deleteService = async (slug: string) => {
   try {
     // Find existing service by slug
     const existingService = await Service.findOne({
-      _id: new ObjectId(id),
+      slug,
       is_deleted: { $ne: true },
     });
 
@@ -295,10 +240,11 @@ const deleteService = async (id: string) => {
     }
 
     // Proceed to update
-    await Service.findOneAndUpdate(
-      { _id: id },
-      { is_deleted: true, is_drafted: false, is_published: false },
-      { new: true }
+    // await Service.deleteOne({ slug });
+
+    await Service.updateOne(
+      { slug },
+      { $set: { is_deleted: true, status: false } }
     ).select("-__v -createdAt -updatedAt -_id");
 
     return;

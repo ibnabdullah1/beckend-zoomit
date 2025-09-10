@@ -2,6 +2,7 @@ import { Router } from "express";
 import { ActionLogRoutes } from "../modules/actionLog/actionLog.route";
 import { AuthRoutes } from "../modules/auth/auth.routes";
 import { BlogRoutes } from "../modules/blog/blog.routes";
+import { InquiriesRoutes } from "../modules/inquiries/inquiries.routes";
 import { MediaRoutes } from "../modules/media/media.routes";
 import { ProjectRoutes } from "../modules/project/project.routes";
 import { ReviewRoutes } from "../modules/review/review.routes";
@@ -41,6 +42,10 @@ const moduleRoutes = [
   {
     path: "/action-logs",
     route: ActionLogRoutes,
+  },
+  {
+    path: "/inquiries",
+    route: InquiriesRoutes,
   },
 ];
 

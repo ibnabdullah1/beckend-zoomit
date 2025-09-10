@@ -17,7 +17,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",
-      "http://localhost:4003",
+      "http://localhost:4007",
       "https://admin.thezoomit.com",
       "https://zoom-it.vercel.app",
       "https://admin-zoomit.vercel.app",

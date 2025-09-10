@@ -60,9 +60,9 @@ const updateSingleService = catchAsync(async (req, res) => {
   });
 });
 const deleteService = catchAsync(async (req, res) => {
-  const id = req.params.id;
-
-  const result = await ServiceServices.deleteService(id);
+  const slug = req.params.slug;
+  console.log(slug);
+  const result = await ServiceServices.deleteService(slug);
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,

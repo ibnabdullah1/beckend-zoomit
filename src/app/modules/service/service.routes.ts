@@ -27,7 +27,7 @@ router.put(
   ServiceControllers.updateSingleService
 );
 router.delete(
-  "/:id",
+  "/:slug",
   auth(UserRole.SUPER_ADMIN),
   actionLogger,
   ServiceControllers.deleteService
