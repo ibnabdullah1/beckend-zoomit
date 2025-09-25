@@ -2,6 +2,7 @@ import { Router } from "express";
 import { ActionLogRoutes } from "../modules/actionLog/actionLog.route";
 import { AuthRoutes } from "../modules/auth/auth.routes";
 import { BlogRoutes } from "../modules/blog/blog.routes";
+import { BrandRoutes } from "../modules/brands/brands.routes";
 import { InquiriesRoutes } from "../modules/inquiries/inquiries.routes";
 import { MediaRoutes } from "../modules/media/media.routes";
 import { ProjectRoutes } from "../modules/project/project.routes";
@@ -32,7 +33,7 @@ const moduleRoutes = [
     route: MediaRoutes,
   },
   {
-    path: "/project",
+    path: "/projects",
     route: ProjectRoutes,
   },
   {
@@ -46,6 +47,10 @@ const moduleRoutes = [
   {
     path: "/inquiries",
     route: InquiriesRoutes,
+  },
+  {
+    path: "/brands",
+    route: BrandRoutes,
   },
 ];
 

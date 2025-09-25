@@ -94,6 +94,7 @@ const getAllService = async (params: any, options: IPaginationOptions) => {
     .sort({ [sortBy]: sortOrder === "asc" ? 1 : -1 })
     .skip(skip)
     .limit(limit);
+  // .populate("brand", "logo name");
 
   const total = await Service.countDocuments(whereConditions);
 
@@ -111,6 +112,7 @@ const getSingleService = async (slug: string) => {
     const result = await Service.findOne({
       slug,
     }).select("-__v -createdAt -updatedAt -_id");
+    // .populate("brand", "logo name");
 
     if (!result) {
       throw new AppError(StatusCodes.NOT_FOUND, "Service is Not Found!");

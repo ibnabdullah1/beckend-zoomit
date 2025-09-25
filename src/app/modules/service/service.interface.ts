@@ -1,3 +1,5 @@
+import { Types } from "mongoose";
+
 export interface IBanner {
   serial_no: number;
   is_hidden: boolean;
@@ -13,10 +15,7 @@ export interface ITrustedTopBrands {
   serial_no: number;
   is_hidden: boolean;
   title: string;
-  brands: {
-    name: string;
-    logo: string;
-  }[];
+  brands: Types.ObjectId[];
 }
 
 export interface IFeatureBanner {
@@ -180,6 +179,8 @@ export interface IStartProjectForm {
 export interface IMoreInfo {
   serial_no: number;
   is_hidden: boolean;
+  title: string;
+  description: string;
   content: string;
 }
 

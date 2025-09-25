@@ -26,12 +26,7 @@ const serviceSchema = new Schema<IService>(
       serial_no: { type: Number, default: 1 },
       is_hidden: { type: Boolean, default: true },
       title: String,
-      brands: [
-        {
-          name: String,
-          logo: String,
-        },
-      ],
+      brands: [{ type: Schema.Types.ObjectId, ref: "Brand" }],
     },
 
     feature_banner: {
@@ -192,6 +187,8 @@ const serviceSchema = new Schema<IService>(
     more_info: {
       serial_no: { type: Number, default: 13 },
       is_hidden: { type: Boolean, default: true },
+      title: { type: String, default: "More Info" },
+      description: { type: String, default: "More Info" },
       content: String,
     },
 
