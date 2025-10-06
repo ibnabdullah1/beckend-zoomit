@@ -33,8 +33,8 @@ const serviceSchema = new Schema<IService>(
       description: String,
       buttons: [
         {
-          text: String, // button text
-          link: String, // button link
+          text: String,
+          link: String,
         },
       ],
     },
@@ -42,7 +42,7 @@ const serviceSchema = new Schema<IService>(
       serial_no: { type: Number, default: 2 },
       is_hidden: { type: Boolean, default: true },
       title: String,
-      brands: [{ type: Schema.Types.ObjectId, ref: "Brand" }],
+      brands: [{ type: Schema.Types.ObjectId, ref: "Brands" }],
     },
 
     feature_banner: {

@@ -111,8 +111,9 @@ const getSingleService = async (slug: string) => {
   try {
     const result = await Service.findOne({
       slug,
-    }).select("-__v -createdAt -updatedAt -_id");
-    // .populate("brand", "logo name");
+    })
+      .select("-__v -createdAt -updatedAt -_id")
+      .populate("trusted_top_brands.brands", "logo name");
 
     if (!result) {
       throw new AppError(StatusCodes.NOT_FOUND, "Service is Not Found!");

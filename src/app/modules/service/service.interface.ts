@@ -18,7 +18,7 @@ export interface IPickup_corner {
   is_hidden: boolean;
   title: string;
   description: string;
-  buttons: {
+  buttons?: {
     text: string;
     link: string;
   }[];
