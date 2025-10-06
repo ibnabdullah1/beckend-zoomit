@@ -11,6 +11,27 @@ export interface IBanner {
   button_link: string;
 }
 
+export interface IPickup_corner {
+  serial_no: number;
+  is_hidden: boolean;
+  title: string;
+  description: string;
+  buttons: {
+    text: string;
+    link: string;
+  }[];
+}
+export interface ISuccessMeter {
+  serial_no?: number;
+  is_hidden?: boolean;
+  title: string;
+  description: string;
+  options: {
+    icon: string;
+    title: string;
+    sort_description: string;
+  }[];
+}
 export interface ITrustedTopBrands {
   serial_no: number;
   is_hidden: boolean;
@@ -130,6 +151,26 @@ export interface IConversionFocusedCTA {
   button_link: string;
   phone_number: string;
 }
+export interface ICustomerFocusedCTA {
+  serial_no: number;
+  is_hidden: boolean;
+  title: string;
+  description: string;
+  key_points: string[];
+  image: string;
+  button_text: string;
+  button_link: string;
+}
+export interface ISuccessFocusedCTA {
+  serial_no: number;
+  is_hidden: boolean;
+  title: string;
+  description?: string;
+  key_points: string[];
+  image: string;
+  button_text: string;
+  button_link: string;
+}
 
 export interface IIndustries {
   serial_no: number;
@@ -194,6 +235,7 @@ export interface IService {
     og_image?: string;
   };
   banner: IBanner;
+  pickup_corner: IPickup_corner;
   trusted_top_brands: ITrustedTopBrands;
   feature_banner: IFeatureBanner;
   features: IFeatures;
@@ -205,10 +247,13 @@ export interface IService {
   tech_stack: ITechStack;
   pricing_plan: IPricingPlan;
   conversion_focused_cta: IConversionFocusedCTA;
+  customer_focused_cta: ICustomerFocusedCTA;
+  success_focused_cta: ISuccessFocusedCTA;
   industries: IIndustries;
   workflow: IWorkflow;
   more_info: IMoreInfo;
   faqs: IFaqs;
+  success_meters: ISuccessMeter;
   start_project_Form: IStartProjectForm;
   status: string;
   is_deleted: boolean;
