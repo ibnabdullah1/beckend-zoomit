@@ -7,8 +7,10 @@ export interface IBanner {
   sub_title: string;
   description: string;
   background_image: string;
-  button_text: string;
-  button_link: string;
+  buttons: {
+    text: string;
+    link: string;
+  }[];
 }
 
 export interface IPickup_corner {

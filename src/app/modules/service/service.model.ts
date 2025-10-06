@@ -18,8 +18,12 @@ const serviceSchema = new Schema<IService>(
       sub_title: String,
       description: String,
       background_image: String,
-      button_text: String,
-      button_link: String,
+      buttons: [
+        {
+          text: String, // button text
+          link: String, // button link
+        },
+      ],
     },
 
     pickup_corner: {
