@@ -24,7 +24,14 @@ const formatDate = (date: Date): string => {
     hour12: true,
   });
 };
-const listImages = async () => {
+export const listImages = async (query: Record<string, unknown>) => {
+  const { page = 1, limit = 10, search } = query;
+
+  const pageNum = Number(page) || 1;
+  const limitNum = Number(limit) || 10;
+  const searchTerm =
+    typeof search === "string" ? search.trim().toLowerCase() : "";
+
   const files = await fs.promises.readdir(uploadsPath);
 
   const imageFiles = files.filter((file) =>
@@ -53,13 +60,33 @@ const listImages = async () => {
     })
   );
 
-  const result = {
-    data: imageData,
+  // ✅ Filter by search term
+  const filteredData = searchTerm
+    ? imageData.filter((img) => img.name.toLowerCase().includes(searchTerm))
+    : imageData;
+
+  // ✅ Sort by createdAt (latest first)
+  const sortedData = filteredData.sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+
+  // ✅ Pagination with auto page adjustment
+  const totalItems = sortedData.length;
+  const totalPages = Math.ceil(totalItems / limitNum) || 1;
+  const validPage = Math.min(pageNum, totalPages);
+  const startIndex = (validPage - 1) * limitNum;
+  const endIndex = startIndex + limitNum;
+  const paginatedData = sortedData.slice(startIndex, endIndex);
+
+  return {
     meta: {
-      total: imageData.length,
+      total: totalItems,
+      totalPages,
+      page: validPage,
+      limit: limitNum,
     },
+    data: paginatedData,
   };
-  return result;
 };
 
 const deleteImage = (fileName: string) => {
@@ -93,7 +120,7 @@ const uploadImage = (file: any, customName: string) => {
 
   return {
     filename: finalFilename,
-    path: `/uploads/${finalFilename}`,
+    path: `/${finalFilename}`,
     customName: customName || finalFilename,
   };
 };
