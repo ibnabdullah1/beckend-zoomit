@@ -20,7 +20,7 @@ export const techStacksController = {
       statusCode: result.success ? StatusCodes.CREATED : StatusCodes.CONFLICT,
       success: result.success ? true : false,
       message: result.message,
-      data: { ...result.data },
+      data: { data: [{ ...result.data }] },
     });
   },
 
@@ -31,6 +31,9 @@ export const techStacksController = {
       statusCode: result.success ? StatusCodes.OK : StatusCodes.CONFLICT,
       success: result.success,
       message: result.message,
+      data: {
+        data: [{ ...result.data }]
+      }
     });
   },
 

@@ -60,6 +60,7 @@ export const techStacksService = {
   async updateTechStack(id: string, payload: ITechStack) {
     try {
       if (payload.name) {
+        // Check if there is another tech stack with the same name
         const existing = await techStacksModel.findOne({
           name: { $regex: `^${payload.name}$`, $options: "i" },
           _id: { $ne: id }, // exclude current document
@@ -70,8 +71,15 @@ export const techStacksService = {
         }
       }
 
-      await techStacksModel.findByIdAndUpdate(id, payload, { new: true });
-      return { success: true, message: "Tech stack updated successfully" };
+      const updatedStack = await techStacksModel.findByIdAndUpdate(id, payload, {
+        new: true,
+      });
+
+      return {
+        success: true,
+        message: "Tech stack updated successfully",
+        data: updatedStack, // return updated document
+      };
     } catch (err: any) {
       console.error("Error updating tech stack:", err);
       return { success: false, message: err.message || "Error updating tech stack" };
