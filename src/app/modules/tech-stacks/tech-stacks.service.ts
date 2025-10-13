@@ -59,21 +59,39 @@ export const techStacksService = {
 
   async updateTechStack(id: string, payload: ITechStack) {
     try {
-      const currentStack = await techStacksModel.findById(id)
-      console.log(currentStack)
+      // 1. Current tech stack ber kora ID diye
+      const currentStack = await techStacksModel.findById(id);
+      if (!currentStack) {
+        return { success: false, message: "Tech stack not found" };
+      }
+
+      // 2. Jodi user name change korte chay
+      if (payload.name && payload.name !== currentStack.name) {
+        // Check duplicate
+        const existing = await techStacksModel.findOne({
+          name: { $regex: `^${payload.name}$`, $options: "i" },
+          _id: { $ne: id }, // ID same na thakte hobe
+        });
+
+        if (existing) {
+          return { success: false, message: "Tech stack with this name already exists" };
+        }
+      }
+
+      // 3. Update korar kaj
+      Object.assign(currentStack, payload);
+      await currentStack.save();
 
       return {
         success: true,
         message: "Tech stack updated successfully",
-        data: currentStack?.toObject(),
+        data: currentStack.toObject(),
       };
     } catch (err: any) {
       console.error("Error updating tech stack:", err);
       return { success: false, message: err.message || "Error updating tech stack" };
     }
-  }
-  ,
-
+  },
 
   async deleteTechStack(id: string) {
     try {
