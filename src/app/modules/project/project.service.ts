@@ -8,13 +8,20 @@ import { IProject } from "./project.interface";
 import { Project } from "./project.model";
 const createProject = async (payload: IProject) => {
   try {
-    const result = await Project.create(payload);
-    return result;
+    // Create project
+    const createdProject = await Project.create(payload);
+
+    const populatedProject = await Project.findById(createdProject._id)
+      .populate("tech_stack") // <-- matches the field name in schema
+      .select("-__v -createdAt -updatedAt");
+
+    return populatedProject || createdProject;
   } catch (err) {
-    console.error("Error creating service:", err);
+    console.error("Error creating project:", err);
     throw err;
   }
 };
+
 const getAllProjects = async (params: any, options: IPaginationOptions) => {
   const { page, limit, skip, sortBy, sortOrder } =
     paginationHelper.calculatePagination(options);
@@ -24,20 +31,20 @@ const getAllProjects = async (params: any, options: IPaginationOptions) => {
   const searchCondition =
     keyword && projectSearchableFields.length > 0
       ? {
-          $or: projectSearchableFields.map((field) => ({
-            [field]: { $regex: keyword, $options: "i" },
-          })),
-        }
+        $or: projectSearchableFields.map((field) => ({
+          [field]: { $regex: keyword, $options: "i" },
+        })),
+      }
       : {};
 
   // Filter condition
   const filterCondition =
     Object.keys(filterData).length > 0
       ? {
-          $and: Object.entries(filterData).map(([key, value]) => ({
-            [key]: value,
-          })),
-        }
+        $and: Object.entries(filterData).map(([key, value]) => ({
+          [key]: value,
+        })),
+      }
       : {};
 
   const whereConditions = {
@@ -49,7 +56,7 @@ const getAllProjects = async (params: any, options: IPaginationOptions) => {
   const data = await Project.find(whereConditions)
     .sort({ [sortBy]: sortOrder === "asc" ? 1 : -1 })
     .skip(skip)
-    .limit(limit);
+    .limit(limit).populate("tech_stack").select("-__v -createdAt -updatedAt")
 
   const total = await Project.countDocuments(whereConditions);
 
