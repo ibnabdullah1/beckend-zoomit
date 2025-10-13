@@ -9,6 +9,7 @@ import { ProjectRoutes } from "../modules/project/project.routes";
 import { ReviewRoutes } from "../modules/review/review.routes";
 import { ServiceRoutes } from "../modules/service/service.routes";
 import { UserRoutes } from "../modules/user/user.routes";
+import techStackRouters from "../modules/tech-stacks/tech-stacks.routes";
 const router = Router();
 
 const moduleRoutes = [
@@ -51,6 +52,10 @@ const moduleRoutes = [
   {
     path: "/brands",
     route: BrandRoutes,
+  },
+  {
+    path: "/tech-stacks",
+    route: techStackRouters,
   },
 ];
 
