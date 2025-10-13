@@ -1,20 +1,22 @@
-import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { MediaServices } from "./media.service";
 
-const listImages = catchAsync(async (req: Request, res: Response) => {
-  const result = await MediaServices.listImages();
+const listImages = catchAsync(async (req, res) => {
+  const { page = 1, limit = 20, search = "" } = req.query;
+
+  const result = await MediaServices.listImages(req.query);
+
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: "Images listed successfully",
+    message: "Images listed successfully (latest first)",
     data: result,
   });
 });
 
-const deleteImage = catchAsync(async (req: Request, res: Response) => {
+const deleteImage = catchAsync(async (req, res) => {
   const fileName = req.params.name;
   await MediaServices.deleteImage(fileName);
 
@@ -25,7 +27,7 @@ const deleteImage = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const uploadImage = catchAsync(async (req: Request, res: Response) => {
+const uploadImage = catchAsync(async (req, res) => {
   if (!req.file) {
     return sendResponse(res, {
       statusCode: StatusCodes.BAD_REQUEST,
@@ -43,7 +45,7 @@ const uploadImage = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const renameImage = catchAsync(async (req: Request, res: Response) => {
+const renameImage = catchAsync(async (req, res) => {
   const { oldName, newName } = req.body;
 
   await MediaServices.renameImage(oldName, newName);
