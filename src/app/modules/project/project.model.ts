@@ -18,10 +18,10 @@ const projectSchema = new Schema<IProject>(
     image: { type: String },
     url: { type: String },
     features: { type: [String], default: [] },
-    tech_stack: [
+    tech_stacks: [
       {
         type: Types.ObjectId,
-        ref: "Tech-stacks",
+        ref: "TechStack",
       },
     ],
     seo: {

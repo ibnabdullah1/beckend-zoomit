@@ -12,7 +12,7 @@ export interface IProject {
   image?: string;
   url?: string;
   features?: string[];
-  tech_stack?: Types.ObjectId[]; // now references TechStack model
+  tech_stacks?: Types.ObjectId[]; // now references TechStack model
   seo?: {
     meta_title?: string;
     meta_description?: string;

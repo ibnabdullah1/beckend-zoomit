@@ -17,8 +17,8 @@ export const techStacksController = {
   async createTechStack(req: Request, res: Response) {
     const result = await techStacksService.createTechStack(req.body);
     sendResponse(res, {
-      statusCode: result.success ? StatusCodes.CREATED : StatusCodes.CONFLICT,
-      success: result.success ? true : false,
+      statusCode: StatusCodes.CREATED,
+      success: true,
       message: result.message,
       data: { data: [{ ...result.data }] },
     });
@@ -28,8 +28,8 @@ export const techStacksController = {
     const { id } = req.params;
     const result = await techStacksService.updateTechStack(id, req.body);
     sendResponse(res, {
-      statusCode: result.success ? StatusCodes.OK : StatusCodes.CONFLICT,
-      success: result.success,
+      statusCode: StatusCodes.OK,
+      success: true,
       message: result.message,
       data: {
         data: [{ ...result.data }]

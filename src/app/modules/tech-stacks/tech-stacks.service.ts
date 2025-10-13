@@ -1,13 +1,14 @@
 import { StatusCodes } from "http-status-codes";
 import { ITechStack } from "./tech-stacks.interface";
-import techStacksModel from "./tech-stacks.model";
 import QueryBuilder from "../../builder/QueryBuilder";
+import { TechStack } from "./tech-stacks.model";
+import AppError from "../../errors/appError";
 
 export const techStacksService = {
 
   async getAllTechStacks(query: Record<string, unknown>) {
     try {
-      const qb = new QueryBuilder(techStacksModel.find(), query)
+      const qb = new QueryBuilder(TechStack.find(), query)
         .search(["name", "description"])
         .filter()
         .sort()
@@ -23,18 +24,14 @@ export const techStacksService = {
 
       };
     } catch (err: any) {
-      console.error("Error getting tech stacks:", err);
-      return {
-        data: null,
-        meta: null,
-      };
+      throw err
     }
   },
 
 
   async createTechStack(payload: ITechStack) {
     try {
-      const existing = await techStacksModel.findOne({
+      const existing = await TechStack.findOne({
         name: { $regex: `^${payload.name}$`, $options: "i" },
       });
 
@@ -42,7 +39,7 @@ export const techStacksService = {
         return { success: false, message: "Tech stack with this name already exists!", data: null };
       }
 
-      const result = await techStacksModel.create(payload);
+      const result = await TechStack.create(payload);
 
       return {
         success: true,
@@ -50,31 +47,30 @@ export const techStacksService = {
         data: result.toObject() // clean JSON
       };
     } catch (err: any) {
-      console.error("Error creating tech stack:", err);
-      return { success: false, message: err.message || "Error creating tech stack", data: null };
+      throw err
     }
-  }
-  ,
+  },
 
 
   async updateTechStack(id: string, payload: ITechStack) {
     try {
-      // 1. Current tech stack ber kora ID diye
-      const currentStack = await techStacksModel.findById(id);
+      const currentStack = await TechStack.findById(id);
       if (!currentStack) {
         return { success: false, message: "Tech stack not found" };
       }
 
-      // 2. Jodi user name change korte chay
       if (payload.name && payload.name !== currentStack.name) {
         // Check duplicate
-        const existing = await techStacksModel.findOne({
+        const existing = await TechStack.findOne({
           name: { $regex: `^${payload.name}$`, $options: "i" },
           _id: { $ne: id }, // ID same na thakte hobe
         });
 
         if (existing) {
-          return { success: false, message: "Tech stack with this name already exists" };
+          throw new AppError(
+            StatusCodes.CONFLICT,
+            "A service with this slug already exists."
+          );
         }
       }
 
@@ -83,28 +79,28 @@ export const techStacksService = {
       await currentStack.save();
 
       return {
-        success: true,
-        message: "Tech stack updated successfully",
         data: currentStack.toObject(),
       };
     } catch (err: any) {
-      console.error("Error updating tech stack:", err);
-      return { success: false, message: err.message || "Error updating tech stack" };
+      throw err;
     }
   },
 
   async deleteTechStack(id: string) {
     try {
-      const isExistTechStack = await techStacksModel.findById(id);
+      const isExistTechStack = await TechStack.findById(id);
       if (!isExistTechStack) {
-        return { success: false, message: "Tech stack not found", data: null };
+        throw new AppError(
+          StatusCodes.NOT_FOUND,
+          "Tech stack not found."
+        );
+
       }
 
-      const result = await techStacksModel.findByIdAndDelete(id);
+      const result = await TechStack.findByIdAndDelete(id);
       return { success: true, message: "Tech stack deleted successfully", data: result };
     } catch (err: any) {
-      console.error("Error deleting tech stack:", err);
-      return { success: false, message: err.message || "Error deleting tech stack", data: null };
+      throw err
     }
   },
 };

@@ -12,12 +12,11 @@ const createProject = async (payload: IProject) => {
     const createdProject = await Project.create(payload);
 
     const populatedProject = await Project.findById(createdProject._id)
-      .populate("tech_stack") // <-- matches the field name in schema
+      .populate("tech_stacks") // <-- matches the field name in schema
       .select("-__v -createdAt -updatedAt");
 
     return populatedProject || createdProject;
   } catch (err) {
-    console.error("Error creating project:", err);
     throw err;
   }
 };
@@ -56,7 +55,7 @@ const getAllProjects = async (params: any, options: IPaginationOptions) => {
   const data = await Project.find(whereConditions)
     .sort({ [sortBy]: sortOrder === "asc" ? 1 : -1 })
     .skip(skip)
-    .limit(limit).populate("tech_stack").select("-__v -createdAt -updatedAt")
+    .limit(limit).populate("tech_stacks").select("-__v -createdAt -updatedAt")
 
   const total = await Project.countDocuments(whereConditions);
 
@@ -77,7 +76,6 @@ const updateProject = async (id: string, payload: any) => {
 
     return result;
   } catch (err) {
-    console.error("Error updating service:", err);
     throw err;
   }
 };
@@ -117,7 +115,6 @@ const getSingleProject = async (id: string) => {
     }
     return result;
   } catch (err) {
-    console.error("Error fetching project:", err);
     throw err;
   }
 };
