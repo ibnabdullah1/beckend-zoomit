@@ -28,7 +28,6 @@ export const techStacksService = {
     }
   },
 
-
   async createTechStack(payload: ITechStack) {
     try {
       const existing = await TechStack.findOne({
@@ -36,7 +35,10 @@ export const techStacksService = {
       });
 
       if (existing) {
-        return { success: false, message: "Tech stack with this name already exists!", data: null };
+        throw new AppError(
+          StatusCodes.CONFLICT,
+          "Tech stack with this name already exists!"
+        );
       }
 
       const result = await TechStack.create(payload);
@@ -56,11 +58,13 @@ export const techStacksService = {
     try {
       const currentStack = await TechStack.findById(id);
       if (!currentStack) {
-        return { success: false, message: "Tech stack not found" };
+        throw new AppError(
+          StatusCodes.NO_CONTENT,
+          "Tech stack not found"
+        );
       }
 
       if (payload.name && payload.name !== currentStack.name) {
-        // Check duplicate
         const existing = await TechStack.findOne({
           name: { $regex: `^${payload.name}$`, $options: "i" },
           _id: { $ne: id }, // ID same na thakte hobe
@@ -74,7 +78,6 @@ export const techStacksService = {
         }
       }
 
-      // 3. Update korar kaj
       Object.assign(currentStack, payload);
       await currentStack.save();
 
@@ -98,7 +101,7 @@ export const techStacksService = {
       }
 
       const result = await TechStack.findByIdAndDelete(id);
-      return { success: true, message: "Tech stack deleted successfully", data: result };
+      return { data: result };
     } catch (err: any) {
       throw err
     }

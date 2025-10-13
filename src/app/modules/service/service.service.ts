@@ -26,7 +26,6 @@ const createSlug = async (payload: IService) => {
 };
 const updateSlug = async (payload: any, slug: string) => {
   try {
-    // Step 1: Check if the service with current slug exists
     const existingService = await Service.findOne({ slug });
     if (!existingService) {
       throw new AppError(
@@ -35,7 +34,6 @@ const updateSlug = async (payload: any, slug: string) => {
       );
     }
 
-    // Step 2: If payload.slug is provided and it's different, check for conflicts
     if (payload.slug && payload.slug !== slug) {
       const slugExists = await Service.exists({ slug: payload.slug });
       if (slugExists) {
@@ -46,7 +44,6 @@ const updateSlug = async (payload: any, slug: string) => {
       }
     }
 
-    // Step 3: Perform update
     const updatedService = await Service.findOneAndUpdate({ slug }, payload, {
       new: true,
       runValidators: true,
@@ -68,20 +65,20 @@ const getAllService = async (params: any, options: IPaginationOptions) => {
   const searchCondition =
     keyword && serviceSearchableFields.length > 0
       ? {
-          $or: serviceSearchableFields.map((field) => ({
-            [field]: { $regex: keyword, $options: "i" },
-          })),
-        }
+        $or: serviceSearchableFields.map((field) => ({
+          [field]: { $regex: keyword, $options: "i" },
+        })),
+      }
       : {};
 
   // Filter condition
   const filterCondition =
     Object.keys(filterData).length > 0
       ? {
-          $and: Object.entries(filterData).map(([key, value]) => ({
-            [key]: value,
-          })),
-        }
+        $and: Object.entries(filterData).map(([key, value]) => ({
+          [key]: value,
+        })),
+      }
       : {};
 
   const whereConditions = {

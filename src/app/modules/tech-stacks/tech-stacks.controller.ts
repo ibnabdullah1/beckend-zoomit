@@ -30,7 +30,7 @@ export const techStacksController = {
     sendResponse(res, {
       statusCode: StatusCodes.OK,
       success: true,
-      message: result.message,
+      message: "Tech stack updated successfully",
       data: {
         data: [{ ...result.data }]
       }
