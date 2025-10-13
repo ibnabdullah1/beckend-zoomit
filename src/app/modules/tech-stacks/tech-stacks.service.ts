@@ -65,7 +65,7 @@ export const techStacksService = {
       return {
         success: true,
         message: "Tech stack updated successfully",
-        data: [],
+        data: currentStack?.toObject(),
       };
     } catch (err: any) {
       console.error("Error updating tech stack:", err);
