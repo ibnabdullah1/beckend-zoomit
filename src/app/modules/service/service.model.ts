@@ -264,6 +264,15 @@ const serviceSchema = new Schema<IService>(
       button_link: String,
     },
 
+    our_projects: {
+      serial_no: { type: Number, default: 21 },
+      is_hidden: { type: Boolean, default: true },
+      title: String,
+      description: String,
+      projects: [{ type: Schema.Types.ObjectId, ref: "Project" }],
+    }
+    ,
+
     status: {
       type: String,
       enum: ["active", "inactive"],

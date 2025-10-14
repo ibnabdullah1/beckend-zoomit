@@ -227,6 +227,15 @@ export interface IMoreInfo {
   content: string;
 }
 
+
+export interface IOurProjectsSlider {
+  serial_no?: number;          // default: 21
+  is_hidden?: boolean;         // default: true
+  title?: string;
+  description?: string;
+  projects?: Types.ObjectId[]; // references "Brands"
+}
+
 export interface IService {
   slug: string;
   seo_content: {
@@ -257,6 +266,7 @@ export interface IService {
   faqs: IFaqs;
   success_meters: ISuccessMeter;
   start_project_Form: IStartProjectForm;
+  our_projects: IOurProjectsSlider;
   status: string;
   is_deleted: boolean;
 }
