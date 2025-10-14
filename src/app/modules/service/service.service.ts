@@ -111,8 +111,8 @@ const getSingleService = async (slug: string) => {
     })
       .select("-__v -createdAt -updatedAt -_id")
       .populate([
-        { path: "trusted_top_brands.brands", select: "logo name", strictPopulate: false },
-        { path: "our_projects.projects", select: "title short_description ", strictPopulate: false },
+        { path: "trusted_top_brands.brands", select: "logo name" },
+        { path: "our_projects.projects", select: "project_logo image title short_description" },
       ]);
 
 

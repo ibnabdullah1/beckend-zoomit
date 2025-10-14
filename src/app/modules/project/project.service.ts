@@ -6,10 +6,11 @@ import { IPaginationOptions } from "../../interface/pagination";
 import { projectSearchableFields } from "./project.constant";
 import { IProject } from "./project.interface";
 import { Project } from "./project.model";
+import { generateSlug } from "../../utils/slug";
 const createProject = async (payload: IProject) => {
   try {
     // Create project
-    const createdProject = await Project.create(payload);
+    const createdProject = await Project.create({ ...payload, slug: generateSlug(payload.title) });
 
     const populatedProject = await Project.findById(createdProject._id)
       .populate("tech_stacks") // <-- matches the field name in schema
