@@ -39,6 +39,19 @@ const getAllService = catchAsync(async (req, res) => {
   });
 });
 
+
+const getAllServicesForCards = catchAsync(async (req, res) => {
+  const filters = pick(req.query, serviceFilterableFields);
+  const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
+  const result = await ServiceServices.getAllServicesForCards(filters, options);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "Service pages retrieved successfully",
+    data: result,
+  });
+});
+
 const getSingleService = catchAsync(async (req, res) => {
   const result = await ServiceServices.getSingleService(req.params.slug);
   sendResponse(res, {
@@ -78,4 +91,5 @@ export const ServiceControllers = {
   getSingleService,
   updateSingleService,
   deleteService,
+  getAllServicesForCards
 };

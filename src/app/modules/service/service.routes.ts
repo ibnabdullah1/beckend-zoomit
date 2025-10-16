@@ -19,6 +19,7 @@ router.put(
   ServiceControllers.updateSlug
 );
 router.get("/", auth(UserRole.SUPER_ADMIN), ServiceControllers.getAllService);
+router.get("/cards", ServiceControllers.getAllServicesForCards);
 router.get("/:slug", ServiceControllers.getSingleService);
 router.put(
   "/:slug",

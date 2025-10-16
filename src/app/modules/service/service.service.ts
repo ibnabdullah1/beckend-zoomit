@@ -104,6 +104,55 @@ const getAllService = async (params: any, options: IPaginationOptions) => {
     data,
   };
 };
+
+const getAllServicesForCards = async (params: any, options: IPaginationOptions) => {
+  const { page, limit, skip, sortBy, sortOrder } =
+    paginationHelper.calculatePagination(options);
+  const { keyword, ...filterData } = params;
+
+  // Search condition
+  const searchCondition =
+    keyword && serviceSearchableFields.length > 0
+      ? {
+        $or: serviceSearchableFields.map((field) => ({
+          [field]: { $regex: keyword, $options: "i" },
+        })),
+      }
+      : {};
+
+  // Filter condition
+  const filterCondition =
+    Object.keys(filterData).length > 0
+      ? {
+        $and: Object.entries(filterData).map(([key, value]) => ({
+          [key]: value,
+        })),
+      }
+      : {};
+
+  const whereConditions = {
+    ...searchCondition,
+    ...filterCondition,
+    is_deleted: { $ne: true },
+  };
+
+  const data = await Service.find(whereConditions)
+    .sort({ [sortBy]: sortOrder === "asc" ? 1 : -1 })
+    .skip(skip)
+    .limit(limit).select("banner.background_image banner.sub_title banner.description slug")
+  // .populate("brand", "logo name");
+
+  const total = await Service.countDocuments(whereConditions);
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data,
+  };
+};
 const getSingleService = async (slug: string) => {
   try {
     const result = await Service.findOne({
@@ -114,7 +163,6 @@ const getSingleService = async (slug: string) => {
         { path: "trusted_top_brands.brands", select: "logo name" },
         { path: "our_projects.projects", select: "project_logo image title short_description" },
       ]);
-
 
     console.log(result?.our_projects)
 
@@ -267,4 +315,5 @@ export const ServiceServices = {
   getSingleService,
   updateSingleService,
   deleteService,
+  getAllServicesForCards
 };

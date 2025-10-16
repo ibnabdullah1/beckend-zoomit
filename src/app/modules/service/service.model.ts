@@ -20,8 +20,8 @@ const serviceSchema = new Schema<IService>(
       background_image: String,
       buttons: [
         {
-          text: String, // button text
-          link: String, // button link
+          text: String,
+          link: String,
         },
       ],
     },
@@ -31,13 +31,9 @@ const serviceSchema = new Schema<IService>(
       is_hidden: { type: Boolean, default: true },
       title: String,
       description: String,
-      buttons: [
-        {
-          text: String,
-          link: String,
-        },
-      ],
+      buttons: [{ text: String, link: String }],
     },
+
     trusted_top_brands: {
       serial_no: { type: Number, default: 2 },
       is_hidden: { type: Boolean, default: true },
@@ -54,6 +50,7 @@ const serviceSchema = new Schema<IService>(
       button_text: String,
       button_link: String,
     },
+
     start_project_cta: {
       serial_no: { type: Number, default: 4 },
       is_hidden: { type: Boolean, default: true },
@@ -72,12 +69,7 @@ const serviceSchema = new Schema<IService>(
       description: String,
       button_text: String,
       button_link: String,
-      options: [
-        {
-          title: String,
-          description: String,
-        },
-      ],
+      options: [{ title: String, description: String }],
     },
 
     key_benefits: {
@@ -85,14 +77,9 @@ const serviceSchema = new Schema<IService>(
       is_hidden: { type: Boolean, default: true },
       title: String,
       description: String,
-      options: [
-        {
-          title: String,
-          description: String,
-          image: String,
-        },
-      ],
+      options: [{ title: String, description: String, image: String }],
     },
+
     conversion_focused_cta: {
       serial_no: { type: Number, default: 7 },
       is_hidden: { type: Boolean, default: true },
@@ -109,12 +96,7 @@ const serviceSchema = new Schema<IService>(
       is_hidden: { type: Boolean, default: true },
       title: String,
       description: String,
-      options: [
-        {
-          title: String,
-          description: String,
-        },
-      ],
+      options: [{ title: String, description: String }],
     },
 
     success_meters: {
@@ -122,13 +104,7 @@ const serviceSchema = new Schema<IService>(
       is_hidden: { type: Boolean, default: true },
       title: String,
       description: String,
-      options: [
-        {
-          icon: String,
-          title: String,
-          sort_description: String,
-        },
-      ],
+      options: [{ icon: String, title: String, sort_description: String }],
     },
 
     tech_stack: {
@@ -136,12 +112,7 @@ const serviceSchema = new Schema<IService>(
       is_hidden: { type: Boolean, default: true },
       title: String,
       description: String,
-      techs: [
-        {
-          name: String,
-          url: String,
-        },
-      ],
+      techs: [{ name: String, url: String }],
     },
 
     customer_focused_cta: {
@@ -154,18 +125,14 @@ const serviceSchema = new Schema<IService>(
       button_text: String,
       button_link: String,
     },
+
     stats: {
       serial_no: { type: Number, default: 12 },
       is_hidden: { type: Boolean, default: true },
       background_image: String,
-      stats: [
-        {
-          count: Number,
-          suffix: String,
-          label: String,
-        },
-      ],
+      stats: [{ count: Number, suffix: String, label: String }],
     },
+
     portfolio_overview: {
       serial_no: { type: Number, default: 13 },
       is_hidden: { type: Boolean, default: true },
@@ -209,31 +176,29 @@ const serviceSchema = new Schema<IService>(
       is_hidden: { type: Boolean, default: true },
       title: String,
       description: String,
-      industries: [
-        {
-          name: String,
-          icon: String,
-        },
-      ],
+      industries: [{ name: String, icon: String }],
+    },
+
+    our_projects: {
+      serial_no: { type: Number, default: 17 },
+      is_hidden: { type: Boolean, default: true },
+      title: String,
+      description: String,
+      projects: [{ type: Schema.Types.ObjectId, ref: "Project" }],
     },
 
     workflow: {
-      serial_no: { type: Number, default: 17 },
+      serial_no: { type: Number, default: 18 },
       is_hidden: { type: Boolean, default: true },
       title: String,
       description: String,
       button_text: String,
       button_link: String,
-      steps: [
-        {
-          title: String,
-          description: String,
-        },
-      ],
+      steps: [{ title: String, description: String }],
     },
 
     more_info: {
-      serial_no: { type: Number, default: 18 },
+      serial_no: { type: Number, default: 19 },
       is_hidden: { type: Boolean, default: true },
       title: { type: String, default: "More Info" },
       description: { type: String, default: "More Info" },
@@ -241,21 +206,16 @@ const serviceSchema = new Schema<IService>(
     },
 
     faqs: {
-      serial_no: { type: Number, default: 19 },
+      serial_no: { type: Number, default: 20 },
       is_hidden: { type: Boolean, default: true },
       title: String,
       description: String,
       image: String,
-      options: [
-        {
-          question: String,
-          answer: String,
-        },
-      ],
+      options: [{ question: String, answer: String }],
     },
 
     start_project_Form: {
-      serial_no: { type: Number, default: 20 },
+      serial_no: { type: Number, default: 21 },
       is_hidden: { type: Boolean, default: true },
       title: String,
       short_description: String,
@@ -263,15 +223,6 @@ const serviceSchema = new Schema<IService>(
       button_text: String,
       button_link: String,
     },
-
-    our_projects: {
-      serial_no: { type: Number, default: 21 },
-      is_hidden: { type: Boolean, default: true },
-      title: String,
-      description: String,
-      projects: [{ type: Schema.Types.ObjectId, ref: "Project" }],
-    }
-    ,
 
     status: {
       type: String,
