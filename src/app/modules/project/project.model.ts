@@ -3,7 +3,7 @@ import { IProject } from "./project.interface";
 
 const projectSchema = new Schema<IProject>(
   {
-    slug: { type: String, },
+    slug: { type: String },
     title: { type: String, required: true },
     short_description: { type: String, required: true },
     description: { type: String },
@@ -20,8 +20,7 @@ const projectSchema = new Schema<IProject>(
     project_logo: { type: String },
     url: { type: String },
     features: { type: [String], default: [] },
-    tech_stacks: [{ type: Types.ObjectId, ref: "TechStack", },
-    ],
+    tech_stacks: [{ type: Types.ObjectId, ref: "TechStack" }],
     seo: {
       meta_title: { type: String },
       meta_description: { type: String },
