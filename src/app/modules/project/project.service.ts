@@ -6,14 +6,19 @@ import { IPaginationOptions } from "../../interface/pagination";
 import { projectSearchableFields } from "./project.constant";
 import { IProject } from "./project.interface";
 import { Project } from "./project.model";
+import { generateSlug } from "../../utils/slug";
 const createProject = async (payload: IProject) => {
   try {
     // Create project
-    const createdProject = await Project.create(payload);
+    const createdProject = await Project.create({
+      ...payload,
+      slug: generateSlug(payload.title),
+    });
 
     const populatedProject = await Project.findById(createdProject._id)
       .populate("tech_stacks") // <-- matches the field name in schema
       .select("-__v -createdAt -updatedAt");
+    console.log("projects:", populatedProject?.toObject());
 
     return populatedProject || createdProject;
   } catch (err) {
@@ -22,28 +27,33 @@ const createProject = async (payload: IProject) => {
 };
 
 const getAllProjects = async (params: any, options: IPaginationOptions) => {
-  const { page, limit, skip, sortBy, sortOrder } =
-    paginationHelper.calculatePagination(options);
+  const {
+    page,
+    limit,
+    skip,
+    sortBy,
+    sortOrder,
+  } = paginationHelper.calculatePagination(options);
   const { keyword, ...filterData } = params;
 
   // Search condition
   const searchCondition =
     keyword && projectSearchableFields.length > 0
       ? {
-        $or: projectSearchableFields.map((field) => ({
-          [field]: { $regex: keyword, $options: "i" },
-        })),
-      }
+          $or: projectSearchableFields.map((field) => ({
+            [field]: { $regex: keyword, $options: "i" },
+          })),
+        }
       : {};
 
   // Filter condition
   const filterCondition =
     Object.keys(filterData).length > 0
       ? {
-        $and: Object.entries(filterData).map(([key, value]) => ({
-          [key]: value,
-        })),
-      }
+          $and: Object.entries(filterData).map(([key, value]) => ({
+            [key]: value,
+          })),
+        }
       : {};
 
   const whereConditions = {
@@ -55,7 +65,9 @@ const getAllProjects = async (params: any, options: IPaginationOptions) => {
   const data = await Project.find(whereConditions)
     .sort({ [sortBy]: sortOrder === "asc" ? 1 : -1 })
     .skip(skip)
-    .limit(limit).populate("tech_stacks").select("-__v -createdAt -updatedAt")
+    .limit(limit)
+    .populate("tech_stacks")
+    .select("-__v -createdAt -updatedAt");
 
   const total = await Project.countDocuments(whereConditions);
 

@@ -11,6 +11,7 @@ import { ReviewRoutes } from "../modules/review/review.routes";
 import { ServiceRoutes } from "../modules/service/service.routes";
 import { UserRoutes } from "../modules/user/user.routes";
 import techStackRouters from "../modules/tech-stacks/tech-stacks.routes";
+import caseStudiesRoutes from "../modules/case-studies/case-studies.routes";
 const router = Router();
 
 const moduleRoutes = [
@@ -62,6 +63,10 @@ const moduleRoutes = [
     path: "/categories",
     route: CategoryRoutes,
   },
+  {
+    path: "/case-studies",
+    route: caseStudiesRoutes,
+  }
 ];
 
 moduleRoutes.forEach((route) => router.use(route.path, route.route));

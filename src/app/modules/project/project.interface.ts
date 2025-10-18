@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 
 export interface IProject {
+  slug: string
   title: string;
   short_description: string;
   description?: string;
@@ -12,6 +13,7 @@ export interface IProject {
   image?: string;
   url?: string;
   features?: string[];
+  project_logo: string
   tech_stacks?: Types.ObjectId[]; // now references TechStack model
   seo?: {
     meta_title?: string;

@@ -16,14 +16,12 @@ const baseProjectSchema = {
   short_description: z.string().min(1, "Short description is required"),
   description: z.string().min(10, "Description is required"),
   category: z.string().min(1, "Category is required"),
-  tech_stack: z
+  tech_stacks: z
     .array(z.string())
     .nonempty("At least one tech stack item is required"),
   client_name: z.string().optional(),
   client_logo: z.string().optional(),
-  features: z
-    .array(z.string())
-    .nonempty("At least one feature is required"),
+  features: z.array(z.string()).nonempty("At least one feature is required"),
   image: z.string().nonempty("Image is required"),
   url: z.string().url("URL must be a valid URL"),
   year: z
@@ -45,7 +43,10 @@ const create = z.object({
 const update = z.object({
   body: z.object(
     Object.fromEntries(
-      Object.entries(baseProjectSchema).map(([key, value]) => [key, value.optional()])
+      Object.entries(baseProjectSchema).map(([key, value]) => [
+        key,
+        value.optional(),
+      ])
     )
   ),
 });

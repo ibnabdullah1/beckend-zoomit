@@ -90,7 +90,56 @@ const getAllService = async (params: any, options: IPaginationOptions) => {
   const data = await Service.find(whereConditions)
     .sort({ [sortBy]: sortOrder === "asc" ? 1 : -1 })
     .skip(skip)
-    .limit(limit);
+    .limit(limit)
+  // .populate("brand", "logo name");
+
+  const total = await Service.countDocuments(whereConditions);
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data,
+  };
+};
+
+const getAllServicesForCards = async (params: any, options: IPaginationOptions) => {
+  const { page, limit, skip, sortBy, sortOrder } =
+    paginationHelper.calculatePagination(options);
+  const { keyword, ...filterData } = params;
+
+  // Search condition
+  const searchCondition =
+    keyword && serviceSearchableFields.length > 0
+      ? {
+        $or: serviceSearchableFields.map((field) => ({
+          [field]: { $regex: keyword, $options: "i" },
+        })),
+      }
+      : {};
+
+  // Filter condition
+  const filterCondition =
+    Object.keys(filterData).length > 0
+      ? {
+        $and: Object.entries(filterData).map(([key, value]) => ({
+          [key]: value,
+        })),
+      }
+      : {};
+
+  const whereConditions = {
+    ...searchCondition,
+    ...filterCondition,
+    is_deleted: { $ne: true },
+  };
+
+  const data = await Service.find(whereConditions)
+    .sort({ [sortBy]: sortOrder === "asc" ? 1 : -1 })
+    .skip(skip)
+    .limit(limit).select("banner.background_image banner.sub_title banner.description slug")
   // .populate("brand", "logo name");
 
   const total = await Service.countDocuments(whereConditions);
@@ -110,7 +159,12 @@ const getSingleService = async (slug: string) => {
       slug,
     })
       .select("-__v -createdAt -updatedAt -_id")
-      .populate("trusted_top_brands.brands", "logo name");
+      .populate([
+        { path: "trusted_top_brands.brands", select: "logo name" },
+        { path: "our_projects.projects", select: "project_logo image title short_description" },
+      ]);
+
+    console.log(result?.our_projects)
 
     if (!result) {
       throw new AppError(StatusCodes.NOT_FOUND, "Service is Not Found!");
@@ -161,6 +215,7 @@ const updateSingleService = async (slug: string, payload: any) => {
       "more_info",
       "faqs",
       "start_project_Form",
+      "our_projects"
     ];
 
     // Serial Conflict Handling
@@ -260,4 +315,5 @@ export const ServiceServices = {
   getSingleService,
   updateSingleService,
   deleteService,
+  getAllServicesForCards
 };
