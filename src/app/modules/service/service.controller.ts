@@ -39,7 +39,6 @@ const getAllService = catchAsync(async (req, res) => {
   });
 });
 
-
 const getAllServicesForCards = catchAsync(async (req, res) => {
   const filters = pick(req.query, serviceFilterableFields);
   const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
@@ -72,9 +71,18 @@ const updateSingleService = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const updateServiceSerial = catchAsync(async (req, res) => {
+  const slug = req.params.slug;
+  const result = await ServiceServices.updateServiceSerial(slug, req.body);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "Service page serial no. updated successfully",
+    data: result,
+  });
+});
 const deleteService = catchAsync(async (req, res) => {
   const slug = req.params.slug;
-  console.log(slug);
   const result = await ServiceServices.deleteService(slug);
   sendResponse(res, {
     statusCode: StatusCodes.OK,
@@ -91,5 +99,6 @@ export const ServiceControllers = {
   getSingleService,
   updateSingleService,
   deleteService,
-  getAllServicesForCards
+  getAllServicesForCards,
+  updateServiceSerial,
 };

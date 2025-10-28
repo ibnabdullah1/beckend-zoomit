@@ -336,6 +336,75 @@ const updateSingleService = async (slug: string, payload: any) => {
     throw err;
   }
 };
+const updateServiceSerial = async (slug: string, payload: any) => {
+  try {
+    const existingService: any = await Service.findOne({ slug });
+
+    if (!existingService) {
+      throw new AppError(StatusCodes.NOT_FOUND, "Service is Not Found!");
+    }
+
+    // Section list
+    const sections = [
+      "banner",
+      "pickup_corner",
+      "trusted_top_brands",
+      "feature_banner",
+      "start_project_cta",
+      "features",
+      "key_benefits",
+      "conversion_focused_cta",
+      "best_features",
+      "success_meters",
+      "tech_stack",
+      "customer_focused_cta",
+      "stats",
+      "portfolio_overview",
+      "pricing_plan",
+      "success_focused_cta",
+      "industries",
+      "our_projects",
+      "workflow",
+      "more_info",
+      "faqs",
+      "start_project_Form",
+    ];
+
+    // Collect serial changes from payload
+    const serialUpdates: Record<string, number> = {};
+    sections.forEach((section) => {
+      if (payload[section]?.serial_no !== undefined) {
+        serialUpdates[section] = payload[section].serial_no;
+      }
+    });
+
+    if (Object.keys(serialUpdates).length > 0) {
+      const TEMP_OFFSET = 1000;
+
+      // Step 1: Assign temporary serial to avoid conflicts
+      const tempSet: any = {};
+      Object.keys(serialUpdates).forEach((section) => {
+        tempSet[`${section}.serial_no`] = serialUpdates[section] + TEMP_OFFSET;
+      });
+      await Service.updateOne({ slug }, { $set: tempSet });
+
+      // Step 2: Assign final serials
+      const finalSet: any = {};
+      Object.keys(serialUpdates).forEach((section) => {
+        finalSet[`${section}.serial_no`] = serialUpdates[section];
+      });
+      await Service.updateOne({ slug }, { $set: finalSet });
+    }
+
+    const updatedService = await Service.findOne({ slug }).select(
+      "-__v -createdAt -updatedAt -_id"
+    );
+    return updatedService;
+  } catch (err) {
+    console.error("Error updating service serials:", err);
+    throw err;
+  }
+};
 
 const deleteService = async (slug: string) => {
   try {
@@ -371,4 +440,5 @@ export const ServiceServices = {
   updateSingleService,
   deleteService,
   getAllServicesForCards,
+  updateServiceSerial,
 };

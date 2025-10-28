@@ -27,6 +27,13 @@ router.put(
   actionLogger,
   ServiceControllers.updateSingleService
 );
+router.put(
+  "/:slug/serial",
+  auth(UserRole.SUPER_ADMIN),
+  actionLogger,
+  ServiceControllers.updateServiceSerial
+);
+
 router.delete(
   "/:slug",
   auth(UserRole.SUPER_ADMIN),
