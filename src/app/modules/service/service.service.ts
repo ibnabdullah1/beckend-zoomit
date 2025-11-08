@@ -182,7 +182,11 @@ const getAllServicesForCards = async (
 // };
 const getSingleService = async (slug: string) => {
   try {
-    const result = await Service.findOne({ slug })
+    const result = await Service.findOne({
+      slug,
+      is_deleted: { $ne: true },
+      status: "active",
+    })
       .select("-__v -createdAt -updatedAt -_id")
       .populate([
         { path: "trusted_top_brands.brands", select: "logo name serial_no" },
