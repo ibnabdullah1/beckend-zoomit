@@ -20,6 +20,7 @@ router.put(
 );
 router.get("/", auth(UserRole.SUPER_ADMIN), ServiceControllers.getAllService);
 router.get("/cards", ServiceControllers.getAllServicesForCards);
+router.get("/web-view/:slug", ServiceControllers.getWebViewSingleService);
 router.get("/:slug", ServiceControllers.getSingleService);
 router.put(
   "/:slug",

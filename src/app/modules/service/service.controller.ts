@@ -60,6 +60,15 @@ const getSingleService = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const getWebViewSingleService = catchAsync(async (req, res) => {
+  const result = await ServiceServices.getWebViewSingleService(req.params.slug);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "Service page retrieved successfully",
+    data: result,
+  });
+});
 
 const updateSingleService = catchAsync(async (req, res) => {
   const slug = req.params.slug;
@@ -101,4 +110,5 @@ export const ServiceControllers = {
   deleteService,
   getAllServicesForCards,
   updateServiceSerial,
+  getWebViewSingleService,
 };

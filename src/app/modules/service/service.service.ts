@@ -184,6 +184,58 @@ const getSingleService = async (slug: string) => {
   try {
     const result = await Service.findOne({
       slug,
+    })
+      .select("-__v -createdAt -updatedAt -_id")
+      .populate([
+        { path: "trusted_top_brands.brands", select: "logo name serial_no" },
+        {
+          path: "our_projects.projects",
+          select: "project_logo image title short_description serial_no",
+        },
+      ]);
+
+    if (!result) {
+      throw new AppError(StatusCodes.NOT_FOUND, "Service is Not Found!");
+    }
+
+    // Sort arrays by serial_no
+    const sortBySerialNo = (arr: any[]) =>
+      arr?.sort((a, b) => (a.serial_no || 0) - (b.serial_no || 0));
+
+    if (result.trusted_top_brands?.brands) {
+      result.trusted_top_brands.brands = sortBySerialNo(
+        result.trusted_top_brands.brands
+      );
+    }
+
+    if (result.features?.options) {
+      result.features.options = sortBySerialNo(result.features.options);
+    }
+
+    if (result.stats?.stats) {
+      result.stats.stats = sortBySerialNo(result.stats.stats);
+    }
+
+    if (result.key_benefits?.options) {
+      result.key_benefits.options = sortBySerialNo(result.key_benefits.options);
+    }
+
+    if (result.our_projects?.projects) {
+      result.our_projects.projects = sortBySerialNo(
+        result.our_projects.projects
+      );
+    }
+
+    return result;
+  } catch (err) {
+    console.error("Error fetching service:", err);
+    throw err;
+  }
+};
+const getWebViewSingleService = async (slug: string) => {
+  try {
+    const result = await Service.findOne({
+      slug,
       is_deleted: { $ne: true },
       status: "active",
     })
@@ -445,4 +497,5 @@ export const ServiceServices = {
   deleteService,
   getAllServicesForCards,
   updateServiceSerial,
+  getWebViewSingleService,
 };
