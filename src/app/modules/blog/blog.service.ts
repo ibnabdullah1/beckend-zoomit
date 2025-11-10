@@ -18,7 +18,6 @@ const createBlog = async (payload: IBlog): Promise<IBlog> => {
   }
 
   payload.slug = slug;
-
   return Blog.create(payload);
 };
 

@@ -7,7 +7,7 @@ import { blogFilterableFields } from "./blog.constant";
 import { BlogServices } from "./blog.service";
 
 const createBlog = catchAsync(async (req: Request, res: Response) => {
-  await BlogServices.createBlog({
+  const result = await BlogServices.createBlog({
     ...req.body,
     author: req.user.userId,
   });
@@ -15,6 +15,7 @@ const createBlog = catchAsync(async (req: Request, res: Response) => {
     statusCode: StatusCodes.CREATED,
     success: true,
     message: "Blog created successfully",
+    data: result,
   });
 });
 
