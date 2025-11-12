@@ -1,11 +1,9 @@
-import slugify from "slugify";
-
-export const generateSlug = (text: string) => {
- const rawSlug =  slugify(text, {
-    lower: true,
-    strict: false,
-    trim: true,
-    remove: /[*+~.()'"!:@]/g,
-  });
-   return encodeURIComponent(rawSlug);
+export const generateSlug = (text: string): string => {
+  return text
+    .trim()
+    .replace(/[~`!@#$%^&*()_+={}[\]|\\:;"'<>,.?/₹•–—]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .replace(/%/g, "");
 };

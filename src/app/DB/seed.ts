@@ -18,7 +18,6 @@ const adminUser = {
   },
 };
 
-
 const seedAdmin = async () => {
   try {
     // Check if an admin already exists

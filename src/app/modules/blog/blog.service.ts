@@ -90,7 +90,6 @@ const updateBlog = async (
   if (data?.title) {
     data.slug = generateSlug(data.title);
   }
-
   const blog = await Blog.findOneAndUpdate(
     { slug: slug, is_deleted: false },
     data,
