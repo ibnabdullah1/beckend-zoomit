@@ -32,14 +32,6 @@ jobs:
       - name: Build TypeScript
         run: yarn build
 
-      - name: Verify build output
-        run: |
-          if [ ! -d "dist" ]; then
-            echo "❌ ERROR: dist folder not found!"
-            exit 1
-          fi
-          echo "✅ dist folder exists"
-
       - name: Create deployment package
         run: |
           mkdir -p deploy-package
@@ -55,12 +47,13 @@ jobs:
             cp -v .env deploy-package/
           fi
 
-      - name: Copy files to server via SSH
+      - name: Upload files to server via SCP
         uses: appleboy/scp-action@v0.1.5
         with:
           host: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
           port: 22
           source: "deploy-package/*"
           target: ${{ env.DEPLOY_PATH }}
@@ -71,6 +64,7 @@ jobs:
           host: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
           port: 22
           script: |
             cd ${{ env.DEPLOY_PATH }}
