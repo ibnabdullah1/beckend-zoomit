@@ -8,126 +8,87 @@ on:
   workflow_dispatch:
 
 env:
-  NODE_VERSION: '18.x'
+  NODE_VERSION: "18.x"
+  APP_NAME: "zoomit-backend"
+  DEPLOY_PATH: "/home/thezoomi/backend"
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
+      # 1️⃣ Checkout code
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 2️⃣ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'yarn'
+          cache: "yarn"
 
+      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
+      # 4️⃣ Build TypeScript
       - name: Build TypeScript
         run: yarn build
 
+      # 5️⃣ Verify dist folder
       - name: Verify build output
         run: |
-          echo "🔍 Verifying build output..."
           if [ ! -d "dist" ]; then
             echo "❌ ERROR: dist folder not found!"
             exit 1
           fi
           echo "✅ dist folder exists"
-          echo "📁 Files in dist:"
-          find dist -type f -name "*.js" | head -20
-          echo "Total JS files: $(find dist -type f -name '*.js' | wc -l)"
-          if [ $(find dist -type f -name '*.js' | wc -l) -eq 0 ]; then
-            echo "❌ ERROR: No JS files found in dist!"
-            exit 1
-          fi
 
+      # 6️⃣ Create deployment package
       - name: Create deployment package
         run: |
-          echo "📦 Creating deployment package..."
           mkdir -p deploy-package
-          
-          # Copy dist folder with all files
-          echo "Copying dist folder..."
-          cp -rv dist deploy-package/ || exit 1
-          
-          # Copy uploads folder if exists
+          cp -rv dist deploy-package/
           if [ -d "uploads" ] && [ "$(ls -A uploads)" ]; then
-            echo "Copying uploads folder..."
-            cp -rv uploads deploy-package/ || exit 1
+            cp -rv uploads deploy-package/
           else
-            echo "⚠️ uploads folder is empty or doesn't exist, creating empty directory"
             mkdir -p deploy-package/uploads
           fi
-          
-          # Copy essential files
-          echo "Copying package files..."
-          cp -v package.json deploy-package/ || exit 1
-          cp -v yarn.lock deploy-package/ || exit 1
-          
-          # Copy .env if exists
+          cp -v package.json deploy-package/
+          cp -v yarn.lock deploy-package/
           if [ -f ".env" ]; then
-            echo "Copying .env file..."
-            cp -v .env deploy-package/ || exit 1
-          else
-            echo "⚠️ .env file not found (this is OK if using server env vars)"
+            cp -v .env deploy-package/
           fi
-          
-          # Verify all files are copied
-          echo ""
-          echo "✅ Verification - All files in deploy-package:"
-          echo "📊 File count:"
-          echo "  Total files: $(find deploy-package -type f | wc -l)"
-          echo "  JS files: $(find deploy-package/dist -name '*.js' 2>/dev/null | wc -l)"
-          echo "  JSON files: $(find deploy-package -name '*.json' 2>/dev/null | wc -l)"
-          echo ""
-          echo "📁 Directory structure:"
-          find deploy-package -type d | sort
-          echo ""
-          echo "📄 Sample files (first 30):"
-          find deploy-package -type f | sort | head -30
-          
-          # Final verification
-          if [ $(find deploy-package/dist -name '*.js' 2>/dev/null | wc -l) -eq 0 ]; then
-            echo "❌ ERROR: No JS files in deploy-package/dist!"
-            exit 1
-          fi
-          echo "✅ Deployment package ready!"
 
-      - name: Deploy to FTP Server
+      # 7️⃣ Deploy via FTP/SFTP
+      - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./deploy-package/
-          server-dir: /zoomit-backend/
+          server-dir: ${{ env.DEPLOY_PATH }}/
           dangerous-clean-slate: false
           exclude: |
             **/.git*
-            **/.git*/
             **/node_modules/**
             **/.env.example
             **/README.md
             **/.github/**
-            **/DEPLOYMENT.md
             **/scripts/**
             **/src/**
             **/tsconfig.json
             **/.vscode/**
             **/.idea/**
-            **/env.example
           log-level: verbose
           dry-run: false
-          ftp-sync: true
 
+      # 8️⃣ Cleanup
       - name: Cleanup
         run: rm -rf deploy-package
 
+      # 9️⃣ Deployment Success
       - name: Deployment Success
         run: echo "✅ Deployment completed successfully!"
-
