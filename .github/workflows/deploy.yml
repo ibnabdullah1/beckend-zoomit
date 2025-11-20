@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  NODE_VERSION: "18.x"
+  NODE_VERSION: "20.x"
   APP_NAME: "zoomit-backend"
   DEPLOY_PATH: "/home/thezoomi/backend"
 
@@ -17,26 +17,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout code
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2️⃣ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "yarn"
 
-      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      # 4️⃣ Build TypeScript
       - name: Build TypeScript
         run: yarn build
 
-      # 5️⃣ Verify dist folder
       - name: Verify build output
         run: |
           if [ ! -d "dist" ]; then
@@ -45,7 +40,6 @@ jobs:
           fi
           echo "✅ dist folder exists"
 
-      # 6️⃣ Create deployment package
       - name: Create deployment package
         run: |
           mkdir -p deploy-package
@@ -61,34 +55,30 @@ jobs:
             cp -v .env deploy-package/
           fi
 
-      # 7️⃣ Deploy via FTP/SFTP
-      - name: Deploy via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      - name: Copy files to server via SSH
+        uses: appleboy/scp-action@v0.1.5
         with:
-          server: ${{ secrets.FTP_HOST }}
+          host: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./deploy-package/
-          server-dir: ${{ env.DEPLOY_PATH }}/
-          dangerous-clean-slate: false
-          exclude: |
-            **/.git*
-            **/node_modules/**
-            **/.env.example
-            **/README.md
-            **/.github/**
-            **/scripts/**
-            **/src/**
-            **/tsconfig.json
-            **/.vscode/**
-            **/.idea/**
-          log-level: verbose
-          dry-run: false
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          source: "deploy-package/*"
+          target: ${{ env.DEPLOY_PATH }}
 
-      # 8️⃣ Cleanup
+      - name: Restart Node.js app with PM2
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            cd ${{ env.DEPLOY_PATH }}
+            pm2 stop ${{ env.APP_NAME }} || echo "No existing process"
+            pm2 start dist/server.js --name ${{ env.APP_NAME }} || pm2 restart ${{ env.APP_NAME }}
+
       - name: Cleanup
         run: rm -rf deploy-package
 
-      # 9️⃣ Deployment Success
       - name: Deployment Success
         run: echo "✅ Deployment completed successfully!"
