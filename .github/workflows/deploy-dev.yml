@@ -30,14 +30,73 @@ jobs:
       - name: Build TypeScript
         run: yarn build
 
+      - name: Verify build output
+        run: |
+          echo "🔍 Verifying build output..."
+          if [ ! -d "dist" ]; then
+            echo "❌ ERROR: dist folder not found!"
+            exit 1
+          fi
+          echo "✅ dist folder exists"
+          echo "📁 Files in dist:"
+          find dist -type f -name "*.js" | head -20
+          echo "Total JS files: $(find dist -type f -name '*.js' | wc -l)"
+          if [ $(find dist -type f -name '*.js' | wc -l) -eq 0 ]; then
+            echo "❌ ERROR: No JS files found in dist!"
+            exit 1
+          fi
+
       - name: Create deployment package
         run: |
+          echo "📦 Creating deployment package..."
           mkdir -p deploy-package
-          cp -r dist deploy-package/
-          cp -r uploads deploy-package/ || true
-          cp package.json deploy-package/
-          cp yarn.lock deploy-package/
-          cp .env deploy-package/ || echo "Warning: .env file not found"
+          
+          # Copy dist folder with all files
+          echo "Copying dist folder..."
+          cp -rv dist deploy-package/ || exit 1
+          
+          # Copy uploads folder if exists
+          if [ -d "uploads" ] && [ "$(ls -A uploads)" ]; then
+            echo "Copying uploads folder..."
+            cp -rv uploads deploy-package/ || exit 1
+          else
+            echo "⚠️ uploads folder is empty or doesn't exist, creating empty directory"
+            mkdir -p deploy-package/uploads
+          fi
+          
+          # Copy essential files
+          echo "Copying package files..."
+          cp -v package.json deploy-package/ || exit 1
+          cp -v yarn.lock deploy-package/ || exit 1
+          
+          # Copy .env if exists
+          if [ -f ".env" ]; then
+            echo "Copying .env file..."
+            cp -v .env deploy-package/ || exit 1
+          else
+            echo "⚠️ .env file not found (this is OK if using server env vars)"
+          fi
+          
+          # Verify all files are copied
+          echo ""
+          echo "✅ Verification - All files in deploy-package:"
+          echo "📊 File count:"
+          echo "  Total files: $(find deploy-package -type f | wc -l)"
+          echo "  JS files: $(find deploy-package/dist -name '*.js' 2>/dev/null | wc -l)"
+          echo "  JSON files: $(find deploy-package -name '*.json' 2>/dev/null | wc -l)"
+          echo ""
+          echo "📁 Directory structure:"
+          find deploy-package -type d | sort
+          echo ""
+          echo "📄 Sample files (first 30):"
+          find deploy-package -type f | sort | head -30
+          
+          # Final verification
+          if [ $(find deploy-package/dist -name '*.js' 2>/dev/null | wc -l) -eq 0 ]; then
+            echo "❌ ERROR: No JS files in deploy-package/dist!"
+            exit 1
+          fi
+          echo "✅ Deployment package ready!"
 
       - name: Deploy to FTP Server (Development)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -47,13 +106,24 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./deploy-package/
           server-dir: /zoomit-backend/
+          dangerous-clean-slate: false
           exclude: |
             **/.git*
-            **/.git*/**
+            **/.git*/
             **/node_modules/**
             **/.env.example
             **/README.md
             **/.github/**
+            **/DEPLOYMENT.md
+            **/scripts/**
+            **/src/**
+            **/tsconfig.json
+            **/.vscode/**
+            **/.idea/**
+            **/env.example
+          log-level: verbose
+          dry-run: false
+          ftp-sync: true
 
       - name: Cleanup
         run: rm -rf deploy-package
