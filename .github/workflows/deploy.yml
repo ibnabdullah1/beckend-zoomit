@@ -47,18 +47,7 @@ jobs:
             cp -v .env deploy-package/
           fi
 
-      - name: Upload files to server via SCP
-        uses: appleboy/scp-action@v0.1.5
-        with:
-          host: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          port: 22
-          source: "deploy-package/*"
-          target: ${{ env.DEPLOY_PATH }}
-
-      - name: Restart Node.js app with PM2
+      - name: Deploy & restart PM2
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.FTP_HOST }}
@@ -67,12 +56,9 @@ jobs:
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           port: 22
           script: |
-            cd ${{ env.DEPLOY_PATH }}
-            pm2 stop ${{ env.APP_NAME }} || echo "No existing process"
-            pm2 start dist/server.js --name ${{ env.APP_NAME }} || pm2 restart ${{ env.APP_NAME }}
-
-      - name: Cleanup
-        run: rm -rf deploy-package
-
-      - name: Deployment Success
-        run: echo "✅ Deployment completed successfully!"
+            echo "📂 Copying files..."
+            rsync -avz --delete ./deploy-package/ $DEPLOY_PATH/
+            echo "⏹ Stopping existing PM2 process..."
+            pm2 stop $APP_NAME || echo "No existing process"
+            echo "▶️ Starting PM2..."
+            pm2 start $DEPLOY_PATH/dist/server.js --name $APP_NAME || pm2 restart $APP_NAME
